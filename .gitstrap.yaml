@@ -1,0 +1,27 @@
+---
+gitstrap:
+    version: v1
+    github:
+        repo:
+            name: ghman
+            description: "Your personal Github manager bot"
+            private: true
+            hooks:
+                - url: "http://p.rehttp.net/http://www.0pdd.com/hook/github"
+                  type: form
+                  events:
+                      - push
+                  active: true
+            collaborators:
+                - "rultor"
+                - "0pdd"
+    templates:
+        - name: "README.md"
+          url: "https://raw.githubusercontent.com/g4s8/gitstrap/master/templates/LICENSE.mit"
+        - name: "LICENSE"
+          url: "https://raw.githubusercontent.com/g4s8/gitstrap/master/templates/README.md"
+    params:
+        rultor: true
+        travis: true
+        pdd: true
+        license: MIT
