@@ -1,0 +1,60 @@
+/*
+ * Copyright (c) 2019 Kirill Ch. (g4s8.publci@gmail.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to read
+ * the Software only. Permissions is hereby NOT GRANTED to use, copy, modify,
+ * merge, publish, distribute, sublicense, and/or sell copies of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ *
+ */
+
+package com.g4s8.ghman.data;
+
+import javax.sql.DataSource;
+import org.cactoos.Scalar;
+import org.cactoos.scalar.Sticky;
+import org.flywaydb.core.Flyway;
+
+/**
+ * Flyway data source.
+ *
+ * @since 1.0
+ * @todo #1:30min Create new library with different data sources,
+ *  move this class and other DataSource implementations and add it
+ *  as dependency.
+ */
+public final class FlywayDataSource implements Scalar<DataSource> {
+
+    /**
+     * Origin.
+     */
+    private final Scalar<DataSource> scalar;
+
+    /**
+     * Ctor.
+     * @param origin Origin
+     */
+    public FlywayDataSource(final Scalar<DataSource> origin) {
+        this.scalar = new Sticky<>(() -> {
+            final DataSource source = origin.value();
+            final Flyway flyway = new Flyway();
+            flyway.setDataSource(source);
+            flyway.migrate();
+            return source;
+        });
+    }
+
+    @Override
+    public DataSource value() throws Exception {
+        return this.scalar.value();
+    }
+}
