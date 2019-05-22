@@ -18,10 +18,12 @@
  */
 package com.g4s8.ghman.web;
 
+import com.g4s8.ghman.user.User;
 import com.g4s8.ghman.user.Users;
 import com.jcabi.http.Request;
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.JsonResponse;
+import com.jcabi.log.Logger;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import javax.sql.DataSource;
@@ -90,9 +92,15 @@ final class TkApp extends TkWrap {
                                         .json()
                                         .readObject()
                                         .getString("access_token");
-                                    new Users(data)
-                                        .user(Long.parseLong(new RqAuth(req).identity().urn().split(":")[2]))
-                                        .authorize(token);
+                                    final String urn = new RqAuth(req).identity().urn();
+                                    final User user = new Users(data)
+                                        .user(Long.parseLong(urn.split(":")[2]));
+                                    user.authorize(token);
+                                    Logger.info(
+                                        TkApp.class,
+                                        "User %d (%s) authorized by token",
+                                        user.uid(), urn
+                                    );
                                     return new RsText("Authorized successfully!");
                                 }
                             ),
