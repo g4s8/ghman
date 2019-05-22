@@ -28,6 +28,13 @@
   <properties>
     <telegram.version>3.6</telegram.version>
   </properties>
+  <repositories>
+    <repository>
+      <id>bintray-g4s8-maven</id>
+      <name>bintray-g4s8-maven</name>
+      <url>https://dl.bintray.com/g4s8/mvn</url>
+    </repository>
+  </repositories>
   <dependencies>
     <!-- web deps -->
     <dependency>
