@@ -16,7 +16,6 @@
  *
  *
  */
-
 package com.g4s8.ghman;
 
 import com.g4s8.ghman.bot.BotApp;
@@ -53,7 +52,11 @@ public final class App {
         web.setPriority(Thread.MAX_PRIORITY);
         final Thread bot = new Thread(
             new VerboseRunnable(
-                new BotApp(opts.bot(), opts.token(), data)
+                new BotApp(
+                    System.getenv("TG_NAME"),
+                    System.getenv("TG_TOKEN"),
+                    data
+                )
             )
         );
         bot.checkAccess();
@@ -94,14 +97,6 @@ public final class App {
          */
         Options(final Iterable<String> args) {
             super(() -> args);
-        }
-
-        String token() {
-            return "722534289:AAH0LYMRngVCdsTTmo69wAwqwdKxEetRUgk";
-        }
-
-        String bot() {
-            return "gh2tm_bot";
         }
     }
 }
