@@ -166,8 +166,8 @@
   </dependencies>
   <!--
   @todo #1:30min Configure qulice plugin and test coverage.
-    Don't forget to exclude Cactoos compat classes,
-    we need to remove them after Takes fixes.
+   Don't forget to exclude Cactoos compat classes,
+   we need to remove them after Takes fixes.
   -->
   <build>
     <finalName>ghman</finalName>
