@@ -27,11 +27,21 @@ import java.io.IOException;
  */
 public final class GhAuthException extends IOException {
 
+    private final User usr;
     /**
      * Ctor.
      * @param msg Message
      */
-    public GhAuthException(final String msg) {
+    public GhAuthException(final User user, final String msg) {
         super(msg);
+        this.usr = user;
+    }
+
+    /**
+     * User.
+     * @return User
+     */
+    public User user() {
+        return this.usr;
     }
 }

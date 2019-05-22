@@ -164,7 +164,7 @@ public final class BotApp implements Runnable {
                                             new FormattedText(
                                                 "You need to [login with Github](http://%s/auth?ps=%d",
                                                 System.getenv("APP_HOST"),
-                                                upd.getMessage().getChatId()
+                                                GhAuthException.class.cast(err).user().uid()
                                             )
                                         )
                                     );

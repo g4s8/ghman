@@ -72,7 +72,7 @@ public final class User {
             throw new IOException("Failed to select token", err);
         }
         if (token.isEmpty()) {
-            throw new GhAuthException("Github token was not found");
+            throw new GhAuthException(this, "Github token was not found");
         }
         return new GhUser(new RtGithub(token));
     }
