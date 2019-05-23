@@ -46,8 +46,10 @@ import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
 import org.takes.misc.Opt;
 import org.takes.rq.RqHref;
+import org.takes.rs.RsEmpty;
 import org.takes.rs.RsRedirect;
 import org.takes.rs.RsText;
+import org.takes.tk.TkFixed;
 import org.takes.tk.TkWrap;
 
 /**
@@ -71,6 +73,10 @@ final class TkApp extends TkWrap {
         super(
             new TkAuth(
                 new TkFork(
+                    new FkRegex(
+                        "/ping",
+                        new TkFixed(new RsEmpty())
+                    ),
                     new FkRegex(
                         "/auth",
                         new TkFork(
