@@ -3,6 +3,8 @@
 
 [![DevOps By Rultor.com](http://www.rultor.com/b/g4s8/ghman)](http://www.rultor.com/p/g4s8/ghman)
 [![EO principles respected here](https://www.elegantobjects.org/badge.svg)](https://www.elegantobjects.org)
+[![Managed by Zerocrat](https://www.0crat.com/badge/CJT4R32Q3.svg)](https://www.0crat.com/p/CJT4R32Q3)
+[![Help donate](https://www.0crat.com/contrib-badge/CJT4R32Q3.svg)](https://www.0crat.com/contrib/CJT4R32Q3)
 
 
 # About
