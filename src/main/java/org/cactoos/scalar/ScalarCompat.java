@@ -13,8 +13,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- *
  */
 
 package org.cactoos.scalar;
@@ -24,6 +22,7 @@ import org.cactoos.Scalar;
 /**
  * Base wrapper.
  *
+ * @param <T> Scalar type
  * @since 1.0
  */
 abstract class ScalarCompat<T> implements Scalar<T> {

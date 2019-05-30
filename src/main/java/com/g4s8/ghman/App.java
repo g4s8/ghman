@@ -13,8 +13,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- *
  */
 package com.g4s8.ghman;
 
@@ -31,13 +29,25 @@ import org.cactoos.iterable.IterableOf;
  * App entry point.
  *
  * @since 1.0
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @checkstyle ExecutableStatementCountCheck (500 lines)
  */
+@SuppressWarnings("PMD.UseUtilityClass")
 public final class App {
+
+    /**
+     * Ctor.
+     */
+    private App() {
+        // App is an entry point with single main() method.
+    }
 
     /**
      * Entry point.
      * @param args Args
+     * @throws Exception If fails
      */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     public static void main(final String[] args) throws Exception {
         final Options opts = new Options(new IterableOf<>(args));
         final DataSource data = new FlywayDataSource(
@@ -88,8 +98,9 @@ public final class App {
 
     /**
      * Command line options.
+     * @since 1.0
      */
-    public final static class Options extends IterableEnvelope<String> {
+    public static final class Options extends IterableEnvelope<String> {
 
         /**
          * Ctor.

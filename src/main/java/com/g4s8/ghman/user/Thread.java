@@ -14,22 +14,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.g4s8.ghman.user;
 
 import java.io.IOException;
+import java.time.Instant;
+import javax.json.JsonObject;
 
 /**
- * Thread type is not supported.
+ * Github notifications thread.
+ *
  * @since 1.0
  */
-public final class UnsupportedThreadException extends IOException {
+public interface Thread {
 
     /**
-     * Ctor.
-     * @param err Message
+     * Thread id.
+     * @return Id
      */
-    public UnsupportedThreadException(final String err) {
-        super(err);
-    }
+    String tid();
+
+    /**
+     * Thread subject.
+     * @return Subject data
+     * @throws IOException If fails
+     */
+    JsonObject subject() throws IOException;
+
+    /**
+     * Get last read timestamp or epoch if never read.
+     * @return Instant timestamp
+     * @throws IOException If fails
+     */
+    Instant lastRead() throws IOException;
 }

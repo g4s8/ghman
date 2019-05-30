@@ -13,8 +13,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- *
  */
 package com.g4s8.ghman.web;
 
@@ -46,10 +44,8 @@ import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
 import org.takes.misc.Opt;
 import org.takes.rq.RqHref;
-import org.takes.rs.RsEmpty;
 import org.takes.rs.RsRedirect;
 import org.takes.rs.RsText;
-import org.takes.tk.TkFixed;
 import org.takes.tk.TkWrap;
 
 /**
@@ -62,7 +58,11 @@ import org.takes.tk.TkWrap;
  * @todo #1:30min Refactor environment usage like APP_HOST, GH_CLIENT,
  *  GH_SECRET, etc, in this class
  *  and telegram classes, find a way to better configure these variables.
+ * @checkstyle LineLengthCheck (500 lines)
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @checkstyle ClassFanOutComplexityCheck (500 lines)
  */
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 final class TkApp extends TkWrap {
 
     /**
@@ -75,7 +75,7 @@ final class TkApp extends TkWrap {
                 new TkFork(
                     new FkRegex(
                         "/ping",
-                        new TkFixed(new RsEmpty())
+                        new TkSync(data)
                     ),
                     new FkRegex(
                         "/auth",
@@ -112,11 +112,12 @@ final class TkApp extends TkWrap {
                             ),
                             new FkFixed(
                                 req -> new RsRedirect(
-                                    new IoChecked<>(() -> new URIBuilder("https://github.com/login/oauth/authorize")
-                                        .addParameter("redirect_uri", String.format("https://%s/auth", System.getenv("APP_HOST")))
-                                        .addParameter("client_id", System.getenv("GH_CLIENT"))
-                                        .addParameter("scope", "notifications")
-                                        .build()
+                                    new IoChecked<>(
+                                        () -> new URIBuilder("https://github.com/login/oauth/authorize")
+                                            .addParameter("redirect_uri", String.format("https://%s/auth", System.getenv("APP_HOST")))
+                                            .addParameter("client_id", System.getenv("GH_CLIENT"))
+                                            .addParameter("scope", "notifications")
+                                            .build()
                                     ).value().toASCIIString()
                                 )
                             )

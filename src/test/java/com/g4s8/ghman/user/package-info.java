@@ -15,21 +15,9 @@
  * SOFTWARE.
  */
 
-package com.g4s8.ghman.user;
-
-import java.io.IOException;
-
 /**
- * Thread type is not supported.
+ * User tests.
+ *
  * @since 1.0
  */
-public final class UnsupportedThreadException extends IOException {
-
-    /**
-     * Ctor.
-     * @param err Message
-     */
-    public UnsupportedThreadException(final String err) {
-        super(err);
-    }
-}
+package com.g4s8.ghman.user;

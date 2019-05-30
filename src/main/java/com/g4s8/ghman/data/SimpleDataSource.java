@@ -13,10 +13,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- *
  */
-
 package com.g4s8.ghman.data;
 
 import com.jcabi.log.Logger;
@@ -32,6 +29,7 @@ import org.cactoos.scalar.Solid;
  *
  * @since 1.0
  */
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class SimpleDataSource implements Scalar<DataSource> {
 
     /**
@@ -43,7 +41,8 @@ public final class SimpleDataSource implements Scalar<DataSource> {
      * Ctor.
      * @param env Environment
      */
-    public SimpleDataSource(Map<String, String> env) {
+    @SuppressWarnings("PMD.ConstructorOnlyInitializesOrCallOtherConstructors")
+    public SimpleDataSource(final Map<String, String> env) {
         SimpleDataSource.check(
             env,
             "DB_HOST", "DB_PORT", "DB_NAME", "DB_USER"
@@ -61,8 +60,8 @@ public final class SimpleDataSource implements Scalar<DataSource> {
      * @param env Environment
      * @return Data source
      */
-    private static DataSource fromEnv(Map<String, String> env) {
-        org.postgresql.jdbc2.optional.SimpleDataSource source =
+    private static DataSource fromEnv(final Map<String, String> env) {
+        final org.postgresql.jdbc2.optional.SimpleDataSource source =
             new org.postgresql.jdbc2.optional.SimpleDataSource();
         source.setUrl(
             String.format(
@@ -74,7 +73,10 @@ public final class SimpleDataSource implements Scalar<DataSource> {
         if (env.containsKey("DB_PASSWORD")) {
             source.setPassword(env.get("DB_PASSWORD"));
         }
-        Logger.info(SimpleDataSource.class, "dataSource: %s", source.getUrl());
+        Logger.info(
+            SimpleDataSource.class,
+            "dataSource: %s", source.getUrl()
+        );
         return source;
     }
 
@@ -89,7 +91,12 @@ public final class SimpleDataSource implements Scalar<DataSource> {
     ) throws IllegalArgumentException {
         for (final String var : req) {
             if (!env.containsKey(var)) {
-                throw new IllegalArgumentException(String.format("Environment variable '%s' is required", var));
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Environment variable '%s' is required",
+                        var
+                    )
+                );
             }
         }
     }

@@ -13,14 +13,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- *
  */
 
 /**
  * Cactoos compat classes, used by Takes classloader,
  * see <a href="https://github.com/yegor256/takes/issues/978">
- * bug report</a>
+ * bug report</a>.
  *
  * @since 1.0
  */

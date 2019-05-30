@@ -13,10 +13,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- *
  */
-
 package com.g4s8.ghman.data;
 
 import javax.sql.DataSource;
@@ -44,13 +41,15 @@ public final class FlywayDataSource implements Scalar<DataSource> {
      * @param origin Origin
      */
     public FlywayDataSource(final Scalar<DataSource> origin) {
-        this.scalar = new Sticky<>(() -> {
-            final DataSource source = origin.value();
-            final Flyway flyway = new Flyway();
-            flyway.setDataSource(source);
-            flyway.migrate();
-            return source;
-        });
+        this.scalar = new Sticky<>(
+            () -> {
+                final DataSource source = origin.value();
+                final Flyway flyway = new Flyway();
+                flyway.setDataSource(source);
+                flyway.migrate();
+                return source;
+            }
+        );
     }
 
     @Override

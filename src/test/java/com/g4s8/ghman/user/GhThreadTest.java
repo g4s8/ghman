@@ -14,22 +14,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.g4s8.ghman.user;
 
-import java.io.IOException;
+import javax.json.Json;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
 
 /**
- * Thread type is not supported.
+ * Test case for {@link GhThread}.
+ *
  * @since 1.0
+ * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class UnsupportedThreadException extends IOException {
+public final class GhThreadTest {
 
-    /**
-     * Ctor.
-     * @param err Message
-     */
-    public UnsupportedThreadException(final String err) {
-        super(err);
+    @Test
+    void parseId() {
+        final String tid = "4";
+        MatcherAssert.assertThat(
+            new GhThread(
+                Json.createObjectBuilder().add("id", tid).build()
+            ).tid(),
+            Matchers.equalTo(tid)
+        );
     }
 }

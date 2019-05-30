@@ -13,33 +13,17 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- *
  */
-
 package com.g4s8.ghman.user;
 
-import com.jcabi.github.Coordinates;
-import com.jcabi.github.Github;
-import com.jcabi.github.Issue;
-import java.io.IOException;
-import java.net.URI;
 import java.time.Instant;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.json.JsonObject;
-import org.cactoos.scalar.IoChecked;
 
 /**
  * Github notification thread.
  * @since 1.0
  */
-public final class GhThread {
-
-    /**
-     * Github.
-     */
-    private final Github ghb;
+public final class GhThread implements Thread {
 
     /**
      * Json.
@@ -48,56 +32,23 @@ public final class GhThread {
 
     /**
      * Ctor.
-     * @param github Github
      * @param jsn Notification json
      */
-    public GhThread(final Github github, final JsonObject jsn) {
-        this.ghb = github;
+    public GhThread(final JsonObject jsn) {
         this.jsn = jsn;
     }
 
-    /**
-     * Notification title.
-     * @return Notification title
-     */
-    public String title() {
-        return this.jsn.getJsonObject("subject").getString("title");
+    @Override
+    public JsonObject subject() {
+        return this.jsn.getJsonObject("subject");
     }
 
-    /**
-     * Thread id.
-     * @return Id
-     */
-    public String nid() {
+    @Override
+    public String tid() {
         return this.jsn.getString("id");
     }
 
-    /**
-     * Resolve thread issue.
-     * @return Github issue
-     * @throws IOException If fails
-     */
-    public Issue resolve() throws IOException {
-        final JsonObject subj = this.jsn.getJsonObject("subject");
-        final String type = subj.getString("type");
-        if (!type.equals("Issue")) {
-            throw new UnsupportedThreadException(String.format("Thread subject type is `%s` - not supported yet", type));
-        }
-        final Matcher matcher = Pattern.compile("/repos/(?<coords>.+/.+)/issues/(?<num>\\d+)").matcher(
-            new IoChecked<>(() -> new URI(subj.getString("url")).getPath()).value()
-        );
-        if (!matcher.matches()) {
-            throw new IOException("Failed to match thread link");
-        }
-        return this.ghb.repos()
-            .get(new Coordinates.Simple(matcher.group("coords")))
-            .issues().get(Integer.parseInt(matcher.group("num")));
-    }
-
-    /**
-     * Get last read timestamp or epoch if never read.
-     * @return Instant timestamp
-     */
+    @Override
     public Instant lastRead() {
         return Instant.parse(
             this.jsn.getString("last_read_at", Instant.EPOCH.toString())

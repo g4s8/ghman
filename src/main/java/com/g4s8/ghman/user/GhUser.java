@@ -13,10 +13,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- *
  */
-
 package com.g4s8.ghman.user;
 
 import com.jcabi.github.Github;
@@ -35,25 +32,25 @@ public final class GhUser {
     /**
      * Github API.
      */
-    private final Github github;
+    private final Github ghb;
 
     /**
      * Ctor.
      * @param github Github API
      */
     public GhUser(final Github github) {
-        this.github = github;
+        this.ghb = github;
     }
 
     /**
-     * Notification threads
+     * Notification threads.
      * @return Notifications
      * @throws IOException If fails
      */
-    public Iterable<GhThread> notifications() throws IOException {
+    public Iterable<Thread> notifications() throws IOException {
         return new Mapped<>(
-            (JsonValue item) -> new GhThread(this.github, item.asJsonObject()),
-            this.github.entry().uri().path("/notifications").back()
+            (JsonValue item) -> new GhThread(item.asJsonObject()),
+            this.ghb.entry().uri().path("/notifications").back()
                 .fetch()
                 .as(JsonResponse.class)
                 .json().readArray()
@@ -68,13 +65,20 @@ public final class GhUser {
      */
     public GhThread thread(final String tid) throws IOException {
         return new GhThread(
-            this.github,
-            this.github.entry()
+            this.ghb.entry()
                 .uri()
                 .path(String.format("/notifications/threads/%s", tid))
                 .back()
                 .fetch().as(JsonResponse.class)
                 .json().readObject()
         );
+    }
+
+    /**
+     * Github with user token.
+     * @return Github API
+     */
+    public Github github() {
+        return this.ghb;
     }
 }

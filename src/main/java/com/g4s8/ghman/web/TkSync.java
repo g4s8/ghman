@@ -16,27 +16,26 @@
  */
 package com.g4s8.ghman.web;
 
-import com.g4s8.ghman.App;
-import com.jcabi.log.Logger;
+import com.g4s8.ghman.user.PgThreads;
+import com.g4s8.ghman.user.Thread;
+import com.g4s8.ghman.user.User;
+import com.g4s8.ghman.user.Users;
 import java.io.IOException;
 import javax.sql.DataSource;
-import org.takes.http.FtCli;
-import org.takes.tk.TkGreedy;
-import org.takes.tk.TkGzip;
-import org.takes.tk.TkMeasured;
-import org.takes.tk.TkVersioned;
+import org.takes.Request;
+import org.takes.Response;
+import org.takes.Take;
+import org.takes.rs.RsEmpty;
 
 /**
- * Web application entry point.
- *
+ * Synchronization trigger, called by Heroku scheduler every 10 minutes.
+ * <p>
+ *     This take synchronizes all unread threads for active users and
+ *     marks these threads as unread with updating last_read value.
+ * </p>
  * @since 1.0
  */
-public final class WebApp implements Runnable {
-
-    /**
-     * Command line options.
-     */
-    private final App.Options opts;
+public final class TkSync implements Take {
 
     /**
      * Data source.
@@ -45,35 +44,23 @@ public final class WebApp implements Runnable {
 
     /**
      * Ctor.
-     * @param opts Options
      * @param data Data source
      */
-    public WebApp(final App.Options opts, final DataSource data) {
-        this.opts = opts;
+    public TkSync(final DataSource data) {
         this.data = data;
     }
 
     @Override
-    public void run() {
-        try {
-            new FtCli(
-                new TkMeasured(
-                    new TkVersioned(
-                        new TkGreedy(
-                            new TkGzip(
-                                new TkApp(this.data)
-                            )
-                        )
-                    )
-                ), this.opts
-            ).start(
-                () -> Thread.currentThread().isInterrupted()
-            );
-        } catch (final IOException err) {
-            Logger.error(
-                this,
-                "Web failed: %[exception]s", err
-            );
+    public Response act(final Request req) throws IOException {
+        final PgThreads tds = new PgThreads(this.data);
+        for (final User user : new Users(this.data).active()) {
+            for (final Thread thread : user.github().notifications()) {
+                final Thread copy = tds.thread(user.uid(), thread.tid());
+                if (copy.lastRead().isBefore(thread.lastRead())) {
+                    tds.update(user.uid(), thread);
+                }
+            }
         }
+        return new RsEmpty();
     }
 }

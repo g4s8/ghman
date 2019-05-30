@@ -13,20 +13,18 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- *
  */
-
 package com.g4s8.ghman.user;
 
-import com.g4s8.ghman.user.GhAuthException;
-import com.g4s8.ghman.user.GhUser;
 import com.jcabi.github.RtGithub;
 import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.Outcome;
 import com.jcabi.jdbc.SingleOutcome;
 import java.io.IOException;
+import java.io.StringReader;
 import java.sql.SQLException;
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.sql.DataSource;
 
 /**
@@ -89,6 +87,25 @@ public final class User {
             ).set(token).set(this.id).update(Outcome.VOID);
         } catch (final SQLException err) {
             throw new IOException("Failed to update token", err);
+        }
+    }
+
+    /**
+     * Telegram data.
+     * @return Telegram data
+     * @throws IOException If fails
+     */
+    public JsonObject telegram() throws IOException {
+        try {
+            return Json.createReader(
+                new StringReader(
+                    new JdbcSession(this.data).sql(
+                        "SELECT tname FROM users WHERE uid = ?"
+                    ).set(this.id).select(new SingleOutcome<>(String.class))
+                )
+            ).readObject();
+        } catch (final SQLException err) {
+            throw new IOException("Failed to select telegram data", err);
         }
     }
 

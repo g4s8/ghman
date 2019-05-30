@@ -13,13 +13,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- *
  */
-
 package com.g4s8.ghman.user;
 
 import com.jcabi.jdbc.JdbcSession;
+import com.jcabi.jdbc.ListOutcome;
 import com.jcabi.jdbc.SingleOutcome;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -93,6 +91,23 @@ public final class Users {
     }
 
     /**
+     * Active users authenticated with Github.
+     * @return Users list
+     * @throws IOException If fails
+     */
+    public Iterable<User> active() throws IOException {
+        try {
+            return new JdbcSession(this.data).sql(
+                "SELECT uid FROM users WHERE gh_token != ''"
+            ).select(
+                new ListOutcome<>(rset -> new User(this.data, rset.getLong(1)))
+            );
+        } catch (final SQLException err) {
+            throw new IOException("Failed to select active users", err);
+        }
+    }
+
+    /**
      * User details from telegram chat.
      * @param chat Chat
      * @return Json details
@@ -106,6 +121,7 @@ public final class Users {
         if (chat.getUserName() != null) {
             details.add("userName", chat.getUserName());
         }
+        details.add("uid", chat.getId());
         return details.build();
     }
 }
