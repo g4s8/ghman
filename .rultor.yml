@@ -1,0 +1,11 @@
+---
+docker:
+  image: "g4s8/rultor:latest"
+env:
+  MAVEN_OPTS: "-Xmx1g"
+merge:
+  script:
+    - "mvn install -B -Pqulice"
+  fast-forward: "no"
+architect:
+  - "g4s8"
