@@ -16,10 +16,10 @@
  */
 package com.g4s8.ghman.web;
 
+import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.user.PgThreads;
 import com.g4s8.ghman.user.Thread;
 import com.g4s8.ghman.user.User;
-import com.g4s8.ghman.user.Users;
 import java.io.IOException;
 import javax.sql.DataSource;
 import org.takes.Request;
@@ -53,7 +53,7 @@ public final class TkSync implements Take {
     @Override
     public Response act(final Request req) throws IOException {
         final PgThreads tds = new PgThreads(this.data);
-        for (final User user : new Users(this.data).active()) {
+        for (final User user : new PgUsers(this.data).active()) {
             for (final Thread thread : user.github().notifications()) {
                 final Thread copy = tds.thread(user.uid(), thread.tid());
                 if (copy.lastRead().isBefore(thread.lastRead())) {

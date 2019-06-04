@@ -16,39 +16,14 @@
  */
 package com.g4s8.ghman.user;
 
-import com.jcabi.jdbc.JdbcSession;
-import com.jcabi.jdbc.ListOutcome;
-import com.jcabi.jdbc.SingleOutcome;
 import java.io.IOException;
-import java.sql.SQLException;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.sql.DataSource;
 import org.telegram.telegrambots.api.objects.Chat;
 
 /**
  * Users.
- *
  * @since 1.0
- * @todo #1:30min Extract interfaces and implement unit tests
- *  with fake objects and integration tests with embedded postgres.
  */
-public final class Users {
-
-    /**
-     * Data source.
-     */
-    private final DataSource data;
-
-    /**
-     * Ctor.
-     * @param data Data source
-     */
-    public Users(final DataSource data) {
-        this.data = data;
-    }
-
+public interface Users {
     /**
      * User for telegram chat.
      *
@@ -56,72 +31,19 @@ public final class Users {
      * @return User
      * @throws IOException If fails
      */
-    public User user(final Chat chat) throws IOException {
-        final JsonObject details = Users.details(chat);
-        try {
-            return new User(
-                this.data,
-                new JdbcSession(this.data)
-                    .sql(
-                        String.join(
-                            " ",
-                            "INSERT INTO users (tid, tname)",
-                            "VALUES (?, ?::json)",
-                            "ON CONFLICT (tid) DO UPDATE SET tname = ?::json",
-                            "RETURNING uid"
-                        )
-                    )
-                    .set(chat.getId())
-                    .set(details.toString())
-                    .set(details.toString())
-                    .select(new SingleOutcome<>(Long.class))
-            );
-        } catch (final SQLException err) {
-            throw new IOException("Failed to select user", err);
-        }
-    }
+    User user(Chat chat) throws IOException;
 
     /**
      * User by id.
      * @param uid User id
      * @return User
      */
-    public User user(final long uid) {
-        return new User(this.data, uid);
-    }
+    User user(long uid);
 
     /**
      * Active users authenticated with Github.
      * @return Users list
      * @throws IOException If fails
      */
-    public Iterable<User> active() throws IOException {
-        try {
-            return new JdbcSession(this.data).sql(
-                "SELECT uid FROM users WHERE gh_token != ''"
-            ).select(
-                new ListOutcome<>(rset -> new User(this.data, rset.getLong(1)))
-            );
-        } catch (final SQLException err) {
-            throw new IOException("Failed to select active users", err);
-        }
-    }
-
-    /**
-     * User details from telegram chat.
-     * @param chat Chat
-     * @return Json details
-     */
-    private static JsonObject details(final Chat chat) {
-        final JsonObjectBuilder details = Json.createObjectBuilder()
-            .add("firstName", chat.getFirstName());
-        if (chat.getLastName() != null) {
-            details.add("lastName", chat.getLastName());
-        }
-        if (chat.getUserName() != null) {
-            details.add("userName", chat.getUserName());
-        }
-        details.add("uid", chat.getId());
-        return details.build();
-    }
+    Iterable<User> active() throws IOException;
 }

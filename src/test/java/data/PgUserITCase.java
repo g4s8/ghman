@@ -14,41 +14,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.g4s8.ghman.user;
+package data;
 
-import java.io.IOException;
-import javax.json.JsonObject;
+import com.g4s8.ghman.data.PgUser;
+import com.g4s8.ghman.user.GhAuthException;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.IsEqual;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
- * User.
+ * Test for {@link com.g4s8.ghman.data.PgUser}.
  * @since 1.0
  */
-public interface User {
-    /**
-     * Github user.
-     * @return User
-     * @throws GhAuthException If not authorized in Github
-     * @throws IOException If fails
-     */
-    GhUser github() throws GhAuthException, IOException;
+final class PgUserITCase extends DatabaseITCase {
 
-    /**
-     * Authorize user with Github token.
-     * @param token Token
-     * @throws IOException If fails
-     */
-    void authorize(String token) throws IOException;
+    @Test
+    void throwsExceptionIfUserIsNotFound() {
+        MatcherAssert.assertThat(
+            Assertions.assertThrows(
+                GhAuthException.class,
+                () -> new PgUser(this.dataSource(), 0).github()
+            ).getMessage(),
+            new IsEqual<>("Github token was not found")
+        );
+    }
 
-    /**
-     * Telegram data.
-     * @return Telegram data
-     * @throws IOException If fails
-     */
-    JsonObject telegram() throws IOException;
-
-    /**
-     * User id.
-     * @return Id
-     */
-    long uid();
 }
