@@ -17,7 +17,7 @@
 package data;
 
 import com.g4s8.ghman.data.PgUser;
-import com.g4s8.ghman.user.GhAuthException;
+import java.io.IOException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.Assertions;
@@ -26,6 +26,9 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link com.g4s8.ghman.data.PgUser}.
  * @since 1.0
+ * @todo #7:30min Continue implement this integtation test: add cases for all
+ *  methods of {@link com.g4s8.ghman.data.PgUser} class. Do not forget about
+ *  all possible exceptions.
  */
 final class PgUserITCase extends DatabaseITCase {
 
@@ -33,10 +36,10 @@ final class PgUserITCase extends DatabaseITCase {
     void throwsExceptionIfUserIsNotFound() {
         MatcherAssert.assertThat(
             Assertions.assertThrows(
-                GhAuthException.class,
+                IOException.class,
                 () -> new PgUser(this.dataSource(), 0).github()
             ).getMessage(),
-            new IsEqual<>("Github token was not found")
+            new IsEqual<>("Failed to select token")
         );
     }
 

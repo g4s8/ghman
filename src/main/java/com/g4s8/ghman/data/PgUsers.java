@@ -33,8 +33,8 @@ import org.telegram.telegrambots.api.objects.Chat;
  * Postgres {@link Users} implementation.
  *
  * @since 1.0
- * @todo #1:30min Extract interfaces and implement unit tests
- *  with fake objects and integration tests with embedded postgres.
+ * @todo #7:30min Create integration test: check all methods of this class and
+ *  do not forget about all possible exceptions.
  */
 public final class PgUsers implements Users {
 
