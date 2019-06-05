@@ -20,4 +20,4 @@
  *
  * @since 1.0
  */
-package data;
+package com.g4s8.ghman.data;

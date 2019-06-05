@@ -14,14 +14,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package data;
+package com.g4s8.ghman.data;
 
-import com.g4s8.ghman.data.PgUser;
 import java.io.IOException;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.llorllale.cactoos.matchers.Assertion;
 
 /**
  * Test for {@link com.g4s8.ghman.data.PgUser}.
@@ -30,17 +30,19 @@ import org.junit.jupiter.api.Test;
  *  methods of {@link com.g4s8.ghman.data.PgUser} class. Do not forget about
  *  all possible exceptions.
  */
-final class PgUserITCase extends DatabaseITCase {
+@ExtendWith(DatabaseExtension.class)
+final class PgUserITCase {
 
     @Test
     void throwsExceptionIfUserIsNotFound() {
-        MatcherAssert.assertThat(
+        new Assertion<>(
+            "Unexpected exception while selecting not existing user",
             Assertions.assertThrows(
                 IOException.class,
-                () -> new PgUser(this.dataSource(), 0).github()
+                () -> new PgUser(DatabaseExtension.dataSource(), 0).github()
             ).getMessage(),
             new IsEqual<>("Failed to select token")
-        );
+        ).affirm();
     }
 
 }

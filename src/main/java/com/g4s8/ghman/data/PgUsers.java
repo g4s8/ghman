@@ -27,6 +27,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.sql.DataSource;
+import org.cactoos.text.Joined;
 import org.telegram.telegrambots.api.objects.Chat;
 
 /**
@@ -59,13 +60,13 @@ public final class PgUsers implements Users {
                 this.data,
                 new JdbcSession(this.data)
                     .sql(
-                        String.join(
+                        new Joined(
                             " ",
                             "INSERT INTO users (tid, tname)",
                             "VALUES (?, ?::json)",
                             "ON CONFLICT (tid) DO UPDATE SET tname = ?::json",
                             "RETURNING uid"
-                        )
+                        ).asString()
                     )
                     .set(chat.getId())
                     .set(details.toString())
@@ -101,6 +102,10 @@ public final class PgUsers implements Users {
      * User details from telegram chat.
      * @param chat Chat
      * @return Json details
+     * @todo #7:30min Replace this static method with an inner class that
+     *  implements/extends JsonObject (depending on what is possible to do)
+     *  and that is responsible of doing what is done here. Do not forget about
+     *  unit test.
      */
     private static JsonObject details(final Chat chat) {
         final JsonObjectBuilder details = Json.createObjectBuilder()
