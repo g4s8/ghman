@@ -42,13 +42,13 @@ final class DatabaseExtension implements BeforeAllCallback, AfterAllCallback {
     /**
      * Embedded postgres.
      */
-    private static final EmbeddedPostgres POSTGRES =
+    private final EmbeddedPostgres postgres =
         new EmbeddedPostgres(Version.V11_1);
 
     @Override
     public void beforeAll(final ExtensionContext context) throws Exception {
         final SimpleDataSource dsrc = new SimpleDataSource();
-        dsrc.setUrl(DatabaseExtension.POSTGRES.start());
+        dsrc.setUrl(this.postgres.start());
         DatabaseExtension.src = dsrc;
         final Flyway flyway = new Flyway();
         flyway.setDataSource(DatabaseExtension.src);
@@ -70,7 +70,7 @@ final class DatabaseExtension implements BeforeAllCallback, AfterAllCallback {
             }
         }
         if (DatabaseExtension.src != null) {
-            DatabaseExtension.POSTGRES.stop();
+            this.postgres.stop();
         }
     }
 

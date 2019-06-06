@@ -17,16 +17,15 @@
 package com.g4s8.ghman.data;
 
 import java.io.IOException;
-import org.hamcrest.core.IsEqual;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.Assertion;
+import org.llorllale.cactoos.matchers.Throws;
 
 /**
  * Test for {@link com.g4s8.ghman.data.PgUser}.
  * @since 1.0
- * @todo #7:30min Continue implement this integtation test: add cases for all
+ * @todo #7:30min Continue implement this integration test: add cases for all
  *  methods of {@link com.g4s8.ghman.data.PgUser} class. Do not forget about
  *  all possible exceptions.
  */
@@ -37,11 +36,11 @@ final class PgUserITCase {
     void throwsExceptionIfUserIsNotFound() {
         new Assertion<>(
             "Unexpected exception while selecting not existing user",
-            Assertions.assertThrows(
-                IOException.class,
-                () -> new PgUser(DatabaseExtension.dataSource(), 0).github()
-            ).getMessage(),
-            new IsEqual<>("Failed to select token")
+            () -> new PgUser(DatabaseExtension.dataSource(), 0).github(),
+            new Throws<>(
+                "Failed to select token",
+                IOException.class
+            )
         ).affirm();
     }
 
