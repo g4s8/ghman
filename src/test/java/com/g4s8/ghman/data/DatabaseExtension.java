@@ -31,6 +31,10 @@ import ru.yandex.qatools.embed.postgresql.distribution.Version;
 /**
  * Database abstract case.
  * @since 1.0
+ * @todo #7:30min Find a way to get rid of static field and method of this
+ *  class. Note that this class is JUnit 5 Extension and is used to prepare
+ *  database to integration tests. See
+ *  https://junit.org/junit5/docs/current/user-guide/#extensions-registration-declarative
  */
 final class DatabaseExtension implements BeforeAllCallback, AfterAllCallback {
 
