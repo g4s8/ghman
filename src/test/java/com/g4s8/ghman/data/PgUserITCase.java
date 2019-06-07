@@ -14,41 +14,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.g4s8.ghman.user;
+package com.g4s8.ghman.data;
 
 import java.io.IOException;
-import javax.json.JsonObject;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.llorllale.cactoos.matchers.Assertion;
+import org.llorllale.cactoos.matchers.Throws;
 
 /**
- * User.
+ * Test for {@link com.g4s8.ghman.data.PgUser}.
  * @since 1.0
+ * @todo #7:30min Continue implement this integration test: add cases for all
+ *  methods of {@link com.g4s8.ghman.data.PgUser} class. Do not forget about
+ *  all possible exceptions.
  */
-public interface User {
-    /**
-     * Github user.
-     * @return User
-     * @throws GhAuthException If not authorized in Github
-     * @throws IOException If fails
-     */
-    GhUser github() throws GhAuthException, IOException;
+@ExtendWith(DatabaseExtension.class)
+final class PgUserITCase {
 
-    /**
-     * Authorize user with Github token.
-     * @param token Token
-     * @throws IOException If fails
-     */
-    void authorize(String token) throws IOException;
+    @Test
+    void throwsExceptionIfUserIsNotFound() {
+        new Assertion<>(
+            "Unexpected exception while selecting not existing user",
+            () -> new PgUser(DatabaseExtension.dataSource(), 0).github(),
+            new Throws<>(
+                "Failed to select token",
+                IOException.class
+            )
+        ).affirm();
+    }
 
-    /**
-     * Telegram data.
-     * @return Telegram data
-     * @throws IOException If fails
-     */
-    JsonObject telegram() throws IOException;
-
-    /**
-     * User id.
-     * @return Id
-     */
-    long uid();
 }

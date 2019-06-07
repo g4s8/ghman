@@ -4,7 +4,7 @@ CREATE TABLE threads(
     tid VARCHAR(32) NOT NULL,
     subject JSON NOT NULL DEFAULT '{}'::json,
     last_read TIMESTAMP NOT NULL,
-    unread BOOLEAN NOT NULL DEFAULT TRUE
+    unread BOOLEAN NOT NULL DEFAULT TRUE,
     PRIMARY KEY (uid, tid)
 );
 

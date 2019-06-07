@@ -16,12 +16,12 @@
  */
 package com.g4s8.ghman.bot;
 
+import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.user.GhAuthException;
 import com.g4s8.ghman.user.GhThread;
 import com.g4s8.ghman.user.GhUser;
 import com.g4s8.ghman.user.Thread;
 import com.g4s8.ghman.user.ThreadIssue;
-import com.g4s8.ghman.user.Users;
 import com.g4s8.teletakes.bot.BotSimple;
 import com.g4s8.teletakes.fk.FkCallbackQuery;
 import com.g4s8.teletakes.fk.FkCommand;
@@ -112,7 +112,7 @@ public final class BotApp implements Runnable {
                             new FkCommand(
                                 "/notifications",
                                 upd -> {
-                                    final GhUser user = new Users(this.data).user(upd.getMessage().getChat()).github();
+                                    final GhUser user = new PgUsers(this.data).user(upd.getMessage().getChat()).github();
                                     final List<Thread> nts = new Solid<>(user.notifications());
                                     return new RsInlineKeyboard(
                                         new RsText(new FormattedText("You have %d unread notifications:", nts.size())),
@@ -131,7 +131,7 @@ public final class BotApp implements Runnable {
                             new FkCallbackQuery(
                                 Pattern.compile("click:notification#(?<tid>[A-Za-z0-9]+)"),
                                 upd -> {
-                                    final GhUser user = new Users(this.data).user(upd.getCallbackQuery().getMessage().getChat()).github();
+                                    final GhUser user = new PgUsers(this.data).user(upd.getCallbackQuery().getMessage().getChat()).github();
                                     final GhThread thread = user.thread(upd.getCallbackQuery().getData().split("#")[1]);
                                     final Issue issue = new ThreadIssue(user.github(), thread);
                                     return new RsText(

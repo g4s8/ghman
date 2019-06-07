@@ -16,8 +16,8 @@
  */
 package com.g4s8.ghman.web;
 
+import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.user.User;
-import com.g4s8.ghman.user.Users;
 import com.jcabi.http.Request;
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.JsonResponse;
@@ -99,7 +99,7 @@ final class TkApp extends TkWrap {
                                         .readObject()
                                         .getString("access_token");
                                     final String urn = new RqAuth(req).identity().urn();
-                                    final User user = new Users(data)
+                                    final User user = new PgUsers(data)
                                         .user(Long.parseLong(urn.split(":")[2]));
                                     user.authorize(token);
                                     Logger.info(
