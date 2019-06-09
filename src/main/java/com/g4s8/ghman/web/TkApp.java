@@ -16,6 +16,7 @@
  */
 package com.g4s8.ghman.web;
 
+import com.g4s8.ghman.data.EnvironmentVariables;
 import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.user.User;
 import com.jcabi.http.Request;
@@ -55,9 +56,6 @@ import org.takes.tk.TkWrap;
  *  extract additional classes for takes and pass, move
  *  actual logic to these classes, keep only composition structure
  *  in TkApp.
- * @todo #1:30min Refactor environment usage like APP_HOST, GH_CLIENT,
- *  GH_SECRET, etc, in this class
- *  and telegram classes, find a way to better configure these variables.
  * @checkstyle LineLengthCheck (500 lines)
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  * @checkstyle ClassFanOutComplexityCheck (500 lines)
@@ -68,8 +66,9 @@ final class TkApp extends TkWrap {
     /**
      * Ctor.
      * @param data Data source
+     * @param environment EnvironmentVariables
      */
-    TkApp(final DataSource data) {
+    TkApp(final DataSource data, final EnvironmentVariables environment) {
         super(
             new TkAuth(
                 new TkFork(
@@ -88,8 +87,8 @@ final class TkApp extends TkWrap {
                                     final String token = new JdkRequest("https://github.com/login/oauth/access_token")
                                         .method(Request.POST)
                                         .uri()
-                                        .queryParam("client_id", System.getenv("GH_CLIENT"))
-                                        .queryParam("client_secret", System.getenv("GH_SECRET"))
+                                        .queryParam("client_id", environment.getGithubClientId())
+                                        .queryParam("client_secret", environment.getGithubClientSecret())
                                         .queryParam("code", code)
                                         .back()
                                         .header("Accept", "application/json")
@@ -114,8 +113,8 @@ final class TkApp extends TkWrap {
                                 req -> new RsRedirect(
                                     new IoChecked<>(
                                         () -> new URIBuilder("https://github.com/login/oauth/authorize")
-                                            .addParameter("redirect_uri", String.format("https://%s/auth", System.getenv("APP_HOST")))
-                                            .addParameter("client_id", System.getenv("GH_CLIENT"))
+                                            .addParameter("redirect_uri", String.format("https://%s/auth", environment.getApplicationHost()))
+                                            .addParameter("client_id", environment.getGithubClientId())
                                             .addParameter("scope", "notifications")
                                             .build()
                                     ).value().toASCIIString()
