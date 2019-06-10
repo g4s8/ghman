@@ -14,48 +14,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.g4s8.ghman.user;
-
-import java.io.IOException;
-import javax.json.JsonObject;
+package com.g4s8.ghman.bot;
 
 /**
- * User.
+ * Test for {@link Notification.UnreadThreads}.
  * @since 1.0
+ * @todo #9:30min This test should be implemented after
+ *  https://github.com/g4s8/teletakes/issues/14 is resolved. Please, try to
+ *  avoid using mocked objects, use fake implementations instead.
  */
-public interface User {
-    /**
-     * Github user.
-     * @return User
-     * @throws GhAuthException If not authorized in Github
-     * @throws IOException If fails
-     */
-    GhUser github() throws GhAuthException, IOException;
+public class UnreadThreadsTest {
 
-    /**
-     * Authorize user with Github token.
-     * @param token Token
-     * @throws IOException If fails
-     */
-    void authorize(String token) throws IOException;
-
-    /**
-     * Telegram data.
-     * @return Telegram data
-     * @throws IOException If fails
-     */
-    JsonObject telegram() throws IOException;
-
-    /**
-     * User id.
-     * @return Id
-     */
-    long uid();
-
-    /**
-     * Telegram identifier.
-     * @return Telegram id
-     * @throws IOException When smth wrong
-     */
-    String tid() throws IOException;
 }

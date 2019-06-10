@@ -14,48 +14,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.g4s8.ghman.user;
-
-import java.io.IOException;
-import javax.json.JsonObject;
 
 /**
- * User.
+ * Bot tests.
+ *
  * @since 1.0
  */
-public interface User {
-    /**
-     * Github user.
-     * @return User
-     * @throws GhAuthException If not authorized in Github
-     * @throws IOException If fails
-     */
-    GhUser github() throws GhAuthException, IOException;
-
-    /**
-     * Authorize user with Github token.
-     * @param token Token
-     * @throws IOException If fails
-     */
-    void authorize(String token) throws IOException;
-
-    /**
-     * Telegram data.
-     * @return Telegram data
-     * @throws IOException If fails
-     */
-    JsonObject telegram() throws IOException;
-
-    /**
-     * User id.
-     * @return Id
-     */
-    long uid();
-
-    /**
-     * Telegram identifier.
-     * @return Telegram id
-     * @throws IOException When smth wrong
-     */
-    String tid() throws IOException;
-}
+package com.g4s8.ghman.bot;
