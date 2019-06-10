@@ -16,13 +16,13 @@
  */
 package com.g4s8.ghman.bot;
 
-import com.g4s8.ghman.data.EnvironmentVariables;
 import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.user.GhAuthException;
 import com.g4s8.ghman.user.GhThread;
 import com.g4s8.ghman.user.GhUser;
 import com.g4s8.ghman.user.Thread;
 import com.g4s8.ghman.user.ThreadIssue;
+import com.g4s8.ghman.utility.EnvironmentVariables;
 import com.g4s8.teletakes.bot.BotSimple;
 import com.g4s8.teletakes.fk.FkCallbackQuery;
 import com.g4s8.teletakes.fk.FkCommand;

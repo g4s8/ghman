@@ -14,37 +14,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.g4s8.ghman.data;
 
 /**
- * Environment Variables Retriever.
+ * Utility classes.
  *
  * @since 1.0
- * @checkstyle NonStaticMethodCheck (100 lines)
  */
-public final class EnvironmentVariables {
-
-    /**
-     * Retrieve GitHub Client Id.
-     * @return Github Client Id
-     */
-    public String getGithubClientId() {
-        return System.getenv("GH_CLIENT");
-    }
-
-    /**
-     * Retrieve GitHub Client Secret.
-     * @return Github secret
-     */
-    public String getGithubClientSecret() {
-        return System.getenv("GH_SECRET");
-    }
-
-    /**
-     * Retrieve Application Host.
-     * @return Application host
-     */
-    public String getApplicationHost() {
-        return System.getenv("APP_HOST");
-    }
-}
+package com.g4s8.ghman.utility;

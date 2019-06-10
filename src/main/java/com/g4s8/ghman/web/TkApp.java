@@ -16,9 +16,9 @@
  */
 package com.g4s8.ghman.web;
 
-import com.g4s8.ghman.data.EnvironmentVariables;
 import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.user.User;
+import com.g4s8.ghman.utility.EnvironmentVariables;
 import com.jcabi.http.Request;
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.JsonResponse;
