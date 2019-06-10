@@ -16,14 +16,14 @@
  */
 package com.g4s8.ghman.utility;
 
-import java.util.HashMap;
 import java.util.Map;
+import org.cactoos.text.FormattedText;
 
 /**
  * Environment Variables Retriever.
  *
  * @since 1.0
- * @todo #5: Implement unit tests for this class.
+ * @todo #5:30mins Implement unit tests for this class.
  */
 public final class EnvironmentVariables {
 
@@ -51,12 +51,12 @@ public final class EnvironmentVariables {
     * Ctor.
     */
     public EnvironmentVariables() {
-        this(createEnvMap());
+        this(System.getenv());
     }
 
     /**
     * Ctor.
-    * @param envvars Preloaded Environment Variables
+    * @param envvars Preloaded Environment Variables Map
     */
     public EnvironmentVariables(final Map<String, String> envvars) {
         this.envvars = envvars;
@@ -69,7 +69,13 @@ public final class EnvironmentVariables {
      *  from system environment variables.
      */
     public String getGithubClientId() throws IllegalStateException {
-        return this.getEnvVarialbe(this.GH_CLIENT);
+        return this.envvars.computeIfAbsent(
+            this.GH_CLIENT,
+            key -> {
+                this.missingKeyExceptionThrower(key);
+                return null;
+            }
+        );
     }
 
     /**
@@ -79,7 +85,13 @@ public final class EnvironmentVariables {
      *  system environment variables.
      */
     public String getGithubClientSecret() throws IllegalStateException {
-        return this.getEnvVarialbe(this.GH_SECRET);
+        return this.envvars.computeIfAbsent(
+            this.GH_SECRET,
+            key -> {
+                this.missingKeyExceptionThrower(key);
+                return null;
+            }
+        );
     }
 
     /**
@@ -89,42 +101,26 @@ public final class EnvironmentVariables {
      *  system environment variables.
      */
     public String getApplicationHost() throws IllegalStateException {
-        return this.getEnvVarialbe(this.APP_HOST);
+        return this.envvars.computeIfAbsent(
+            this.APP_HOST,
+            key -> {
+                this.missingKeyExceptionThrower(key);
+                return null;
+            }
+        );
     }
 
     /**
-     * Retrieve a value from environmentvars map.
-     * @param key The key whose associated value is to be returned
-     * @return The value to which the specified key is mapped
-     * @throws IllegalStateException if this map contains no mapping for the
-     *  key
+     * Throws IllegalStateException with message containing the missing key.
+     * @param key The key which is missing from the environment variables
+     * @throws IllegalStateException Always thrown.
      */
-    private String getEnvVarialbe(final String key) throws IllegalStateException {
-        final String value = this.envvars.get(key);
-        if (value == null) {
-            throw new IllegalStateException();
-        }
-        return value;
-    }
-
-    /**
-     * Create a Map of Pre configured System Environment variables.
-     * @return The map initialized with the values from the system env.
-     */
-    private static Map<String, String> createEnvMap() {
-        final Map<String, String> envmap = new HashMap<>();
-        envmap.put(
-            EnvironmentVariables.GH_CLIENT,
-            System.getenv(EnvironmentVariables.GH_CLIENT)
+    private void missingKeyExceptionThrower(final String key) throws IllegalStateException {
+        throw new IllegalStateException(
+            new FormattedText(
+                "%s is missing from System Environment variables",
+                key
+            ).toString()
         );
-        envmap.put(
-            EnvironmentVariables.GH_SECRET,
-            System.getenv(EnvironmentVariables.GH_SECRET)
-        );
-        envmap.put(
-            EnvironmentVariables.APP_HOST,
-            System.getenv(EnvironmentVariables.APP_HOST)
-        );
-        return envmap;
     }
 }
