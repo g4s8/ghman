@@ -70,10 +70,7 @@ public final class EnvironmentVariables {
     public String getGithubClientId() throws IllegalStateException {
         return this.envvars.computeIfAbsent(
             this.GH_CLIENT,
-            key -> {
-                this.missingKeyExceptionThrower(key);
-                return null;
-            }
+            this::missingKeyExceptionThrower
         );
     }
 
@@ -86,10 +83,7 @@ public final class EnvironmentVariables {
     public String getGithubClientSecret() throws IllegalStateException {
         return this.envvars.computeIfAbsent(
             this.GH_SECRET,
-            key -> {
-                this.missingKeyExceptionThrower(key);
-                return null;
-            }
+            this::missingKeyExceptionThrower
         );
     }
 
@@ -102,19 +96,17 @@ public final class EnvironmentVariables {
     public String getApplicationHost() throws IllegalStateException {
         return this.envvars.computeIfAbsent(
             this.APP_HOST,
-            key -> {
-                this.missingKeyExceptionThrower(key);
-                return null;
-            }
+            this::missingKeyExceptionThrower
         );
     }
 
     /**
      * Throws IllegalStateException with message containing the missing key.
      * @param key The key which is missing from the environment variables
+     * @return Value to be added. Always null for this function.
      * @throws IllegalStateException Always thrown.
      */
-    private void missingKeyExceptionThrower(final String key) throws IllegalStateException {
+    private String missingKeyExceptionThrower(final String key) throws IllegalStateException {
         throw new IllegalStateException(
             new FormattedText(
                 "%s is missing from System Environment variables",

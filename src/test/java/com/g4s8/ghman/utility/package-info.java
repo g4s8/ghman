@@ -16,7 +16,7 @@
  */
 
 /**
- * User tests.
+ * Utility package tests.
  *
  * @since 1.0
  */
