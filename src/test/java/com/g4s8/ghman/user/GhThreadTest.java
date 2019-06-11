@@ -27,15 +27,14 @@ import org.llorllale.cactoos.matchers.Assertion;
  * Test case for {@link GhThread}.
  *
  * @since 1.0
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class GhThreadTest {
+final class GhThreadTest {
 
     @Test
     void parseId() {
         final String tid = "4";
         new Assertion<>(
-            "Failed to get thread id from json",
+            "Must get thread id from json",
             new GhThread(
                 Json.createObjectBuilder().add("id", tid).build()
             ).tid(),
@@ -48,7 +47,7 @@ public final class GhThreadTest {
         final JsonObject subj = Json.createObjectBuilder()
             .add("title", "issue #3").add("link", "http://issues/3").build();
         new Assertion<>(
-            "Failed to get subject from json",
+            "Must get subject from json",
             new GhThread(
                 Json.createObjectBuilder().add("subject", subj).build()
             ).subject(),
@@ -60,7 +59,7 @@ public final class GhThreadTest {
     void returnsLastRead() {
         final String date = "2019-12-03T10:15:30.00Z";
         new Assertion<>(
-            "Failed to get last read from json",
+            "Must get last read from json",
             new GhThread(
                 Json.createObjectBuilder().add("last_read_at", date).build()
             ).lastRead(),
@@ -71,7 +70,7 @@ public final class GhThreadTest {
     @Test
     void returnsEpochWhenLastReadIsAbsent() {
         new Assertion<>(
-            "Failed to get Instant.EPOCH as last read",
+            "Must get Instant.EPOCH as last read",
             new GhThread(
                 Json.createObjectBuilder().build()
             ).lastRead(),

@@ -25,9 +25,8 @@
   <version>1.0-SNAPSHOT</version>
   <properties>
     <telegram.version>3.6</telegram.version>
-    <surefire.version>3.0.0-M1</surefire.version>
+    <surefire.version>3.0.0-M3</surefire.version>
     <junit.version>5.4.2</junit.version>
-    <cactoos.dir>${basedir}/src/main/java/org/cactoos</cactoos.dir>
   </properties>
   <repositories>
     <repository>
@@ -167,11 +166,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <!--
-  @todo #1:30min Configure qulice plugin and test coverage.
-   Don't forget to exclude Cactoos compat classes,
-   we need to remove them after Takes fixes.
-  -->
   <build>
     <finalName>ghman</finalName>
     <plugins>
@@ -266,7 +260,6 @@
             <configuration>
               <output>file</output>
               <excludes>
-                <exclude>**/*.sketch</exclude>
                 <exclude>**/org/cactoos/**/*</exclude>
                 <exclude>**/ghman/data/*</exclude>
               </excludes>
@@ -290,7 +283,7 @@
                       <element>BUNDLE</element>
                       <!--
                         @todo #8:30min Increase code coverage by
-                         writing unit tests. All coverage ration minimums are
+                         writing unit tests. All coverage ratio minimums are
                          supposed to be greater than 0.60. Classes missed count
                          maximum is 8. When this goal is achieved ask ARC
                          whether these minimums are enough.
