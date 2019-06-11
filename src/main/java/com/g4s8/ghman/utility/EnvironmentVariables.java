@@ -23,7 +23,6 @@ import org.cactoos.text.FormattedText;
  * Environment Variables Retriever.
  *
  * @since 1.0
- * @todo #5:30mins Implement unit tests for this class.
  */
 public final class EnvironmentVariables {
 
