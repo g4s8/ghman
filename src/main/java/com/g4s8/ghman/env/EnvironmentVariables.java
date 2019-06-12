@@ -14,7 +14,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.g4s8.ghman.utility;
+package com.g4s8.ghman.env;
 
 import java.util.Map;
 import org.cactoos.text.FormattedText;
@@ -67,7 +67,7 @@ public final class EnvironmentVariables {
      * @throws IllegalStateException if Github Client Id is missing
      *  from system environment variables.
      */
-    public String getGithubClientId() throws IllegalStateException {
+    public String githubClientId() throws IllegalStateException {
         return this.envvars.computeIfAbsent(
             this.GH_CLIENT,
             this::missingKeyExceptionThrower
@@ -80,7 +80,7 @@ public final class EnvironmentVariables {
      * @throws IllegalStateException if Github Secret is missing from
      *  system environment variables.
      */
-    public String getGithubClientSecret() throws IllegalStateException {
+    public String githubClientSecret() throws IllegalStateException {
         return this.envvars.computeIfAbsent(
             this.GH_SECRET,
             this::missingKeyExceptionThrower
@@ -93,7 +93,7 @@ public final class EnvironmentVariables {
      * @throws IllegalStateException if Application host is missing from
      *  system environment variables.
      */
-    public String getApplicationHost() throws IllegalStateException {
+    public String applicationHost() throws IllegalStateException {
         return this.envvars.computeIfAbsent(
             this.APP_HOST,
             this::missingKeyExceptionThrower

@@ -16,8 +16,8 @@
  */
 
 /**
- * Utility classes.
+ * Environment classes.
  *
  * @since 1.0
  */
-package com.g4s8.ghman.utility;
+package com.g4s8.ghman.env;

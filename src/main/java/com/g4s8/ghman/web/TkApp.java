@@ -17,8 +17,8 @@
 package com.g4s8.ghman.web;
 
 import com.g4s8.ghman.data.PgUsers;
+import com.g4s8.ghman.env.EnvironmentVariables;
 import com.g4s8.ghman.user.User;
-import com.g4s8.ghman.utility.EnvironmentVariables;
 import com.jcabi.http.Request;
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.JsonResponse;
@@ -66,9 +66,9 @@ final class TkApp extends TkWrap {
     /**
      * Ctor.
      * @param data Data source
-     * @param environment EnvironmentVariables
+     * @param env EnvironmentVariables
      */
-    TkApp(final DataSource data, final EnvironmentVariables environment) {
+    TkApp(final DataSource data, final EnvironmentVariables env) {
         super(
             new TkAuth(
                 new TkFork(
@@ -87,8 +87,8 @@ final class TkApp extends TkWrap {
                                     final String token = new JdkRequest("https://github.com/login/oauth/access_token")
                                         .method(Request.POST)
                                         .uri()
-                                        .queryParam("client_id", environment.getGithubClientId())
-                                        .queryParam("client_secret", environment.getGithubClientSecret())
+                                        .queryParam("client_id", env.githubClientId())
+                                        .queryParam("client_secret", env.githubClientSecret())
                                         .queryParam("code", code)
                                         .back()
                                         .header("Accept", "application/json")
@@ -113,8 +113,8 @@ final class TkApp extends TkWrap {
                                 req -> new RsRedirect(
                                     new IoChecked<>(
                                         () -> new URIBuilder("https://github.com/login/oauth/authorize")
-                                            .addParameter("redirect_uri", String.format("https://%s/auth", environment.getApplicationHost()))
-                                            .addParameter("client_id", environment.getGithubClientId())
+                                            .addParameter("redirect_uri", String.format("https://%s/auth", env.applicationHost()))
+                                            .addParameter("client_id", env.githubClientId())
                                             .addParameter("scope", "notifications")
                                             .build()
                                     ).value().toASCIIString()

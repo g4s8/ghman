@@ -14,7 +14,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.g4s8.ghman.utility;
+package com.g4s8.ghman.env;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +61,7 @@ public final class EnvironmentVariablesTest {
     void shouldReturnClientValue() {
         new Assertion<>(
             "Failed to get Github Client value from environment variables",
-            new EnvironmentVariables(this.validvarmap).getGithubClientId(),
+            new EnvironmentVariables(this.validvarmap).githubClientId(),
             new IsEqual<>(EnvironmentVariablesTest.CLIENT_ID)
         ).affirm();
     }
@@ -70,7 +70,7 @@ public final class EnvironmentVariablesTest {
     void shouldReturnSecretValue() {
         new Assertion<>(
             "Failed to get Github Secret value from environment variables",
-            new EnvironmentVariables(this.validvarmap).getGithubClientSecret(),
+            new EnvironmentVariables(this.validvarmap).githubClientSecret(),
             new IsEqual<>(EnvironmentVariablesTest.SECRET)
         ).affirm();
     }
@@ -79,7 +79,7 @@ public final class EnvironmentVariablesTest {
     void shouldReturnAppHostValue() {
         new Assertion<>(
             "Failed to get Application Host value from environment variables",
-            new EnvironmentVariables(this.validvarmap).getApplicationHost(),
+            new EnvironmentVariables(this.validvarmap).applicationHost(),
             new IsEqual<>(EnvironmentVariablesTest.APP_HOST)
         ).affirm();
     }
