@@ -35,15 +35,16 @@ import org.cactoos.text.TextOf;
 import org.telegram.telegrambots.api.objects.Update;
 
 /**
- * Telegram bot Notifications Fallback.
+ * Telegram bot notifications button thread.
  *
  * @since 1.0
- * @todo #2:30min Implement Unit tests
- * @todo #2:30mins Fix the ClassDataAbstractionCouplingCheck rule exclusion
- *  in TkNotificationsFallback class
+ * @todo #2:30min Implement Unit tests for TkThread class
+ *  *  use JUNIT and cactoos-matchers wrapper.
+ * @todo #2:30min Fix the ClassDataAbstractionCouplingCheck rule exclusion
+ *  in TkThread class. This class is too complex.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-public final class TkNotificationsFallback implements TmTake {
+public final class TkThread implements TmTake {
 
     /**
      * Data source.
@@ -54,7 +55,7 @@ public final class TkNotificationsFallback implements TmTake {
      * Ctor.
      * @param data Data source
      */
-    public TkNotificationsFallback(final DataSource data) {
+    public TkThread(final DataSource data) {
         this.data = data;
     }
 

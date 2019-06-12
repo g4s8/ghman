@@ -39,7 +39,7 @@ import org.telegram.telegrambots.api.objects.Update;
  * @since 1.0
  * @todo #2:30min Implement Unit tests
  */
-public final class TkNotificationsCommand implements TmTake {
+public final class TkNotifications implements TmTake {
 
     /**
      * Data source.
@@ -50,7 +50,7 @@ public final class TkNotificationsCommand implements TmTake {
      * Ctor.
      * @param data Data source
      */
-    public TkNotificationsCommand(final DataSource data) {
+    public TkNotifications(final DataSource data) {
         this.data = data;
     }
 

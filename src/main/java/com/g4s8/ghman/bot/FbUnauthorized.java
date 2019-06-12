@@ -25,12 +25,13 @@ import org.cactoos.text.FormattedText;
 import org.telegram.telegrambots.api.objects.Update;
 
 /**
- * Telegram bot Fallback.
+ * Telegram bot Unauthorized.
  *
  * @since 1.0
- * @todo #2:30min Implement Unit tests
+ * @todo #2:30min Implement Unit tests for FbUnauthorized class
+ *  use JUNIT and cactoos-matchers wrapper.
  */
-public final class FbFallback implements TmFallback {
+public final class FbUnauthorized implements TmFallback {
 
     @Override
     public Optional<TmResponse> handle(final Update update, final Throwable throwable) {

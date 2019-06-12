@@ -25,7 +25,6 @@ import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.util.regex.Pattern;
 import javax.sql.DataSource;
-import org.takes.facets.fallback.Fallback;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
@@ -89,14 +88,14 @@ public final class BotApp implements Runnable {
                         new TkFork(
                             new FkCommand(
                                 "/notifications",
-                                    new TkNotificationsCommand(this.data)
+                                    new TkNotifications(this.data)
                             ),
                             new FkCallbackQuery(
                                 Pattern.compile("click:notification#(?<tid>[A-Za-z0-9]+)"),
-                                    new TkNotificationsFallback(this.data)
+                                    new TkThread(this.data)
                             )
                         ),
-                        new FbFallback()
+                        new FbUnauthorized()
                     )
                 ),
                 this.name, this.token
