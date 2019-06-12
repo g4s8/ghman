@@ -261,7 +261,6 @@
               <output>file</output>
               <excludes>
                 <exclude>**/org/cactoos/**/*</exclude>
-                <exclude>**/ghman/data/*</exclude>
               </excludes>
             </configuration>
             <executions>
