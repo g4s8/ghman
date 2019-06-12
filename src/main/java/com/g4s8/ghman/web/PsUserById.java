@@ -25,16 +25,38 @@ import org.takes.misc.Opt;
 import org.takes.rq.RqHref;
 
 /**
- * Numeric Flag identity extraction.
+ * User by identity extraction.
  * @since 1.0
- * @todo #4:30min Implement unit tests for PsNumericFlag
+ * @todo #4:30min Implement unit tests for PsUserById
  */
-final class PsNumericFlag implements Pass {
+final class PsUserById implements Pass {
+
+    /**
+     * Flag.
+     */
+    private final String flag;
+
+    /**
+     * Ctor.
+     * @param flag Flag
+     */
+    PsUserById(final String flag) {
+        this.flag = flag;
+    }
+
+    /**
+     * Ctor.
+     */
+    PsUserById() {
+        this("ps");
+    }
 
     @Override
     public Opt<Identity> enter(final Request req) throws IOException {
         return new Opt.Single<>(
-            new Identity.Simple(String.format("urn:uid:%s", new RqHref.Smart(req).single("ps")))
+            new Identity.Simple(
+                String.format("urn:uid:%s", new RqHref.Smart(req).single(this.flag))
+            )
         );
     }
 
@@ -42,5 +64,4 @@ final class PsNumericFlag implements Pass {
     public Response exit(final Response response, final Identity identity) {
         return response;
     }
-
 }

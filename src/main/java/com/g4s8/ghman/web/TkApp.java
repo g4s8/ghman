@@ -64,7 +64,7 @@ final class TkApp extends TkWrap {
                     new PsByFlag(
                         "ps",
                         new PsByFlag.Pair(
-                            Pattern.compile("\\d+"), new PsNumericFlag()
+                            Pattern.compile("\\d+"), new PsUserById()
                         )
                     ),
                     new PsCookie(
