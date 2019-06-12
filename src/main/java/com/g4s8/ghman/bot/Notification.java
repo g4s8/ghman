@@ -41,15 +41,21 @@ public interface Notification {
      * Unread threads notification.
      * @since 1.0
      * @todo #9:30 Continue implement notifications for user when new messages
-     *  (unread github notification) arrive. Unread msgs can be retrieved with
-     *  the help of PgThreads#unread() method, and this class is meant to sent
-     *  them to tlg chat. So set up whole mechanism together.
+     *  (unread github notification) arrive. To do that we need to monitor
+     *  unread notifications by constantly checking `threads` table for unread
+     *  threads. Schedule java thread (or any other synchronization process) to
+     *  periodically call `PgThreads#unread()` to retrieve unread messages and
+     *  use `Notification.UnreadThreads()` to send them.
      * @todo #9:30min Now this class send only github subject title as
      *  notification. Please aks ARC what exactly we want to send to user and
      *  create a class to extract and format this information from `JsonObject`
      *  (github subject) accordingly.
+     * @todo #9:30min Test for `Notification.UnreadThreads` should be
+     *  implemented after https://github.com/g4s8/teletakes/issues/14 is
+     *  resolved. Please, while implementing try to avoid using mocked objects,
+     *  use fake implementations instead.
      */
-    class UnreadThreads implements Notification {
+    final class UnreadThreads implements Notification {
 
         /**
          * Telegram bot.
