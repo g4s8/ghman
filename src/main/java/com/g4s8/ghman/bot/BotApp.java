@@ -17,6 +17,7 @@
 package com.g4s8.ghman.bot;
 
 import com.g4s8.ghman.data.PgUsers;
+import com.g4s8.ghman.env.EnvironmentVariables;
 import com.g4s8.ghman.user.GhAuthException;
 import com.g4s8.ghman.user.GhThread;
 import com.g4s8.ghman.user.GhUser;
@@ -167,7 +168,7 @@ public final class BotApp implements Runnable {
                                     new RsText(
                                         new FormattedText(
                                             "You need to [login with Github](http://%s/auth?ps=%d",
-                                            System.getenv("APP_HOST"),
+                                            new EnvironmentVariables().applicationHost(),
                                             GhAuthException.class.cast(err).user().uid()
                                         )
                                     )
