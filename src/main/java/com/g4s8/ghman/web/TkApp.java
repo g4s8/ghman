@@ -16,59 +16,32 @@
  */
 package com.g4s8.ghman.web;
 
-import com.g4s8.ghman.data.PgUsers;
-import com.g4s8.ghman.env.EnvironmentVariables;
-import com.g4s8.ghman.user.User;
-import com.jcabi.http.Request;
-import com.jcabi.http.request.JdkRequest;
-import com.jcabi.http.response.JsonResponse;
-import com.jcabi.log.Logger;
-import java.io.IOException;
 import java.util.regex.Pattern;
 import javax.sql.DataSource;
-import org.apache.http.client.utils.URIBuilder;
-import org.cactoos.scalar.IoChecked;
-import org.takes.Response;
-import org.takes.facets.auth.Identity;
-import org.takes.facets.auth.Pass;
 import org.takes.facets.auth.PsByFlag;
 import org.takes.facets.auth.PsChain;
 import org.takes.facets.auth.PsCookie;
-import org.takes.facets.auth.RqAuth;
 import org.takes.facets.auth.TkAuth;
 import org.takes.facets.auth.codecs.CcAes;
 import org.takes.facets.auth.codecs.CcCompact;
 import org.takes.facets.auth.codecs.CcHex;
-import org.takes.facets.fork.FkFixed;
 import org.takes.facets.fork.FkParams;
 import org.takes.facets.fork.FkRegex;
 import org.takes.facets.fork.TkFork;
-import org.takes.misc.Opt;
-import org.takes.rq.RqHref;
-import org.takes.rs.RsRedirect;
-import org.takes.rs.RsText;
 import org.takes.tk.TkWrap;
 
 /**
  * Takes app entry point.
  * @since 1.0
- * @todo #1:30min Refactor this class:
- *  extract additional classes for takes and pass, move
- *  actual logic to these classes, keep only composition structure
- *  in TkApp.
- * @checkstyle LineLengthCheck (500 lines)
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
- * @checkstyle ClassFanOutComplexityCheck (500 lines)
  */
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 final class TkApp extends TkWrap {
 
     /**
      * Ctor.
      * @param data Data source
-     * @param env EnvironmentVariables
      */
-    TkApp(final DataSource data, final EnvironmentVariables env) {
+    TkApp(final DataSource data) {
         super(
             new TkAuth(
                 new TkFork(
@@ -81,45 +54,9 @@ final class TkApp extends TkWrap {
                         new TkFork(
                             new FkParams(
                                 "code", ".+",
-                                req -> {
-                                    final String code = new RqHref.Smart(req)
-                                        .single("code");
-                                    final String token = new JdkRequest("https://github.com/login/oauth/access_token")
-                                        .method(Request.POST)
-                                        .uri()
-                                        .queryParam("client_id", env.githubClientId())
-                                        .queryParam("client_secret", env.githubClientSecret())
-                                        .queryParam("code", code)
-                                        .back()
-                                        .header("Accept", "application/json")
-                                        .fetch()
-                                        .as(JsonResponse.class)
-                                        .json()
-                                        .readObject()
-                                        .getString("access_token");
-                                    final String urn = new RqAuth(req).identity().urn();
-                                    final User user = new PgUsers(data)
-                                        .user(Long.parseLong(urn.split(":")[2]));
-                                    user.authorize(token);
-                                    Logger.info(
-                                        TkApp.class,
-                                        "User %d (%s) authorized by token",
-                                        user.uid(), urn
-                                    );
-                                    return new RsText("Authorized successfully!");
-                                }
+                                new TkGitHubAuthorization(data)
                             ),
-                            new FkFixed(
-                                req -> new RsRedirect(
-                                    new IoChecked<>(
-                                        () -> new URIBuilder("https://github.com/login/oauth/authorize")
-                                            .addParameter("redirect_uri", String.format("https://%s/auth", env.applicationHost()))
-                                            .addParameter("client_id", env.githubClientId())
-                                            .addParameter("scope", "notifications")
-                                            .build()
-                                    ).value().toASCIIString()
-                                )
-                            )
+                            new FkGitHubAuthRedirection()
                         )
                     )
                 ),
@@ -127,32 +64,13 @@ final class TkApp extends TkWrap {
                     new PsByFlag(
                         "ps",
                         new PsByFlag.Pair(
-                            Pattern.compile("\\d+"),
-                            new Pass() {
-                                @Override
-                                public Opt<Identity> enter(final org.takes.Request req) throws IOException {
-                                    return new Opt.Single<>(
-                                        new Identity.Simple(
-                                            String.format(
-                                                "urn:uid:%s",
-                                                new RqHref.Smart(req).single("ps")
-                                            )
-                                        )
-                                    );
-                                }
-
-                                @Override
-                                public Response exit(final Response response, final Identity identity) {
-                                    return response;
-                                }
-                            }
+                            Pattern.compile("\\d+"), new PsUserById()
                         )
                     ),
                     new PsCookie(
                         new CcHex(
                             new CcAes(
-                                new CcCompact(),
-                                "temporarykey1234"
+                                new CcCompact(), "temporarykey1234"
                             )
                         )
                     )

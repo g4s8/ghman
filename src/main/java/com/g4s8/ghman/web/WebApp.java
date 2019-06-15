@@ -17,7 +17,6 @@
 package com.g4s8.ghman.web;
 
 import com.g4s8.ghman.App;
-import com.g4s8.ghman.env.EnvironmentVariables;
 import com.jcabi.log.Logger;
 import java.io.IOException;
 import javax.sql.DataSource;
@@ -62,7 +61,7 @@ public final class WebApp implements Runnable {
                     new TkVersioned(
                         new TkGreedy(
                             new TkGzip(
-                                new TkApp(this.data, new EnvironmentVariables())
+                                new TkApp(this.data)
                             )
                         )
                     )
