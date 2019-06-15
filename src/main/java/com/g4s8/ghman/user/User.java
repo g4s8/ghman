@@ -51,4 +51,11 @@ public interface User {
      * @return Id
      */
     long uid();
+
+    /**
+     * Telegram identifier.
+     * @return Telegram id
+     * @throws IOException When smth wrong
+     */
+    String tid() throws IOException;
 }
