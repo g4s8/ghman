@@ -16,37 +16,15 @@
  */
 package com.g4s8.ghman.bot;
 
-import com.g4s8.ghman.data.PgUsers;
-import com.g4s8.ghman.env.EnvironmentVariables;
-import com.g4s8.ghman.user.GhAuthException;
-import com.g4s8.ghman.user.GhThread;
-import com.g4s8.ghman.user.GhUser;
-import com.g4s8.ghman.user.Thread;
-import com.g4s8.ghman.user.ThreadIssue;
 import com.g4s8.teletakes.bot.BotSimple;
 import com.g4s8.teletakes.fk.FkCallbackQuery;
 import com.g4s8.teletakes.fk.FkCommand;
-import com.g4s8.teletakes.rs.RsInlineKeyboard;
-import com.g4s8.teletakes.rs.RsText;
-import com.g4s8.teletakes.rs.TmResponse;
 import com.g4s8.teletakes.tk.TkFallback;
 import com.g4s8.teletakes.tk.TkFork;
 import com.jcabi.aspects.Tv;
-import com.jcabi.github.Comment;
-import com.jcabi.github.Issue;
 import com.jcabi.log.Logger;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 import java.util.regex.Pattern;
 import javax.sql.DataSource;
-import org.cactoos.list.Mapped;
-import org.cactoos.list.Solid;
-import org.cactoos.map.MapEntry;
-import org.cactoos.text.FormattedText;
-import org.cactoos.text.Joined;
-import org.cactoos.text.TextOf;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
@@ -56,13 +34,11 @@ import org.telegram.telegrambots.generics.BotSession;
  * Telegram bot entry point.
  *
  * @since 1.0
- * @todo #1:30min Refactor this class:
- *  move actual logic to separate takes and keep only
- *  composition structure in this class.
+ * @todo #2:30mins Fix the ClassDataAbstractionCouplingCheck & PMD rule
+ *  exclusions in BotApp class
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
- * @checkstyle LineLengthCheck (500 lines)
- * @checkstyle ExecutableStatementCountCheck (500 lines)
  */
+@SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
 public final class BotApp implements Runnable {
 
     static {
@@ -112,72 +88,14 @@ public final class BotApp implements Runnable {
                         new TkFork(
                             new FkCommand(
                                 "/notifications",
-                                upd -> {
-                                    final GhUser user = new PgUsers(this.data).user(upd.getMessage().getChat()).github();
-                                    final List<Thread> nts = new Solid<>(user.notifications());
-                                    return new RsInlineKeyboard(
-                                        new RsText(new FormattedText("You have %d unread notifications:", nts.size())),
-                                        new Mapped<>(
-                                            ntf -> Collections.singleton(
-                                                new MapEntry<>(
-                                                    ntf.subject().getString("title"),
-                                                    String.format("click:notification#%s", ntf.tid())
-                                                )
-                                            ),
-                                            nts
-                                        )
-                                    );
-                                }
+                                    new TkNotifications(this.data)
                             ),
                             new FkCallbackQuery(
                                 Pattern.compile("click:notification#(?<tid>[A-Za-z0-9]+)"),
-                                upd -> {
-                                    final GhUser user = new PgUsers(this.data).user(upd.getCallbackQuery().getMessage().getChat()).github();
-                                    final GhThread thread = user.thread(upd.getCallbackQuery().getData().split("#")[1]);
-                                    final Issue issue = new ThreadIssue(user.github(), thread);
-                                    return new RsText(
-                                        new FormattedText(
-                                            "[#%d](%s) - %s\n\n%s",
-                                            issue.number(),
-                                            String.format("https://github.com/%s/issues/%d", issue.repo().coordinates(), issue.number()),
-                                            new Issue.Smart(issue).title(),
-                                            new Joined(
-                                                new TextOf("\n\n"),
-                                                new Mapped<>(
-                                                    cmt -> new FormattedText(
-                                                        "[@%s](https://github.com/%s) > %s",
-                                                        cmt.author().login(),
-                                                        cmt.author().login(),
-                                                        cmt.body()
-                                                    ),
-                                                    new Mapped<>(
-                                                        Comment.Smart::new,
-                                                        issue.comments().iterate(new Date(thread.lastRead().toEpochMilli()))
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    );
-                                }
+                                    new TkThread(this.data)
                             )
                         ),
-                        (upd, err) -> {
-                            final Optional<TmResponse> rsp;
-                            if (err instanceof GhAuthException) {
-                                rsp = Optional.of(
-                                    new RsText(
-                                        new FormattedText(
-                                            "You need to [login with Github](http://%s/auth?ps=%d",
-                                            new EnvironmentVariables().applicationHost(),
-                                            GhAuthException.class.cast(err).user().uid()
-                                        )
-                                    )
-                                );
-                            } else {
-                                rsp = Optional.empty();
-                            }
-                            return rsp;
-                        }
+                        new FbUnauthorized()
                     )
                 ),
                 this.name, this.token
