@@ -15,3 +15,37 @@ put comments by replying to Telegram messages, mark notifications as read,
 close tickets, merge PRs, etc. To start working you don't need to create GitHub auth tokens
 manually, the bot is configured as GitHub application and it redirects user to GitHub OAuth page
 to request permissions on first interraction.
+
+# Usage
+
+To start using the bot, just start talking with [@ghman_bot](https://t.me/ghman_bot)
+via Telegram, the bot will ask you to authorize via Github using OAuth2,
+on Github OAuth page you will be asked to grant access to your notifications.
+After authorization you may start to use Telegram commands:
+ - `/notifications` - to list all unread threads, you can click any
+ thread to see new (unread) messages in the ticket or PR.
+By replying Telegram message with Github thread you will post a comment in
+the thread.
+
+# Contributing
+
+If you're interested in contributing, you need to have an
+account in [Zerocracy](https://www.0crat.com) and read this document:
+https://github.com/g4s8/ghman/blob/master/CONTRIBUTING.md
+
+If want to [submit a bug](https://www.zerocracy.com/policy.html#29) read
+[this](https://www.yegor256.com/2018/02/06/where-to-find-more-bugs.html)
+and
+[this](https://www.yegor256.com/2018/04/24/right-way-to-report-bugs.html).
+
+To propose some changes you need to be assigned as a performer (`DEV` role) to
+some ticket. Then you have:
+ 1. Fork the repo, clone it locally
+ 2. Switch to branch for your issue, write a code, make sure it's building with
+ `mvn clean install -Pqulice` command
+ 3. Submit a pull request, check that CI passed, fix errors if not passed
+ 4. Wait for code review, fix or discuss reviewer comments
+ 5. Wait for architect to merge (architect may ask additional changes)
+ 6. After merge to `master` ask issue author to close the ticket
+ 
+To build and run tests locally you need `>=jdk-8` and `>=maven-3.*`

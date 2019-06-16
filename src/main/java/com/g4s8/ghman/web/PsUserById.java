@@ -14,48 +14,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.g4s8.ghman.user;
+package com.g4s8.ghman.web;
 
 import java.io.IOException;
-import javax.json.JsonObject;
+import org.takes.Request;
+import org.takes.Response;
+import org.takes.facets.auth.Identity;
+import org.takes.facets.auth.Pass;
+import org.takes.misc.Opt;
+import org.takes.rq.RqHref;
 
 /**
- * User.
+ * User by identity extraction.
  * @since 1.0
+ * @todo #4:30min Implement unit tests for PsUserById
  */
-public interface User {
-    /**
-     * Github user.
-     * @return User
-     * @throws GhAuthException If not authorized in Github
-     * @throws IOException If fails
-     */
-    GhUser github() throws GhAuthException, IOException;
+final class PsUserById implements Pass {
 
     /**
-     * Authorize user with Github token.
-     * @param token Token
-     * @throws IOException If fails
+     * Flag.
      */
-    void authorize(String token) throws IOException;
+    private final String flag;
 
     /**
-     * Telegram data.
-     * @return Telegram data
-     * @throws IOException If fails
+     * Ctor.
+     * @param flag Flag
      */
-    JsonObject telegram() throws IOException;
+    PsUserById(final String flag) {
+        this.flag = flag;
+    }
 
     /**
-     * User id.
-     * @return Id
+     * Ctor.
      */
-    long uid();
+    PsUserById() {
+        this("ps");
+    }
 
-    /**
-     * Telegram identifier.
-     * @return Telegram id
-     * @throws IOException When smth wrong
-     */
-    String tid() throws IOException;
+    @Override
+    public Opt<Identity> enter(final Request req) throws IOException {
+        return new Opt.Single<>(
+            new Identity.Simple(
+                String.format("urn:uid:%s", new RqHref.Smart(req).single(this.flag))
+            )
+        );
+    }
+
+    @Override
+    public Response exit(final Response response, final Identity identity) {
+        return response;
+    }
 }
