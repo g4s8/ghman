@@ -24,8 +24,9 @@ on Github OAuth page you will be asked to grant access to your notifications.
 After authorization you may start to use Telegram commands:
  - `/notifications` - to list all unread threads, you can click any
  thread to see new (unread) messages in the ticket or PR.
-By replying Telegram message with Github thread you will post a comment in
-the thread.
+When you reply to Telegram message with a thread (from `/notifications`)
+you're posting a comment to thread source (issue or PR), so you're
+responding to a message right in Telegram bot.
 
 # Contributing
 
