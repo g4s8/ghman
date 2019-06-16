@@ -32,7 +32,8 @@ import org.takes.rs.RsRedirect;
  * @since 1.0
  * @todo #4:30min Replace the call to static method String.format
  *  with the use of cactoos' text.Formatted class in all files.
- * @todo #4:30min Implement unit tests for FkGitHubAuthRedirection
+ * @todo #4:30min Implement unit tests for FkGitHubAuthRedirection. Refer
+ *  to takes framework Unit testing guide @ https://github.com/yegor256/takes#unit-testing
  */
 public final class FkGitHubAuthRedirection extends FkWrap {
 
