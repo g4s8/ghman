@@ -1,6 +1,7 @@
 --source=.
 --verbose
 --exclude=.idea/**/*
+--exclude=target/**/*
 --rule min-words:10
 --rule min-estimate:15
 --rule max-estimate:90
