@@ -27,6 +27,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.sql.DataSource;
+import org.cactoos.Scalar;
 import org.cactoos.text.Joined;
 import org.telegram.telegrambots.api.objects.Chat;
 
@@ -54,7 +55,7 @@ public final class PgUsers implements Users {
 
     @Override
     public User user(final Chat chat) throws IOException {
-        final JsonObject details = PgUsers.details(chat);
+        final JsonObject details = new JsonUserDetails(chat).value();
         try {
             return new PgUser(
                 this.data,
@@ -99,24 +100,44 @@ public final class PgUsers implements Users {
     }
 
     /**
-     * User details from telegram chat.
-     * @param chat Chat
-     * @return Json details
-     * @todo #7:30min Replace this static method with an inner class that
-     *  implements/extends JsonObject (depending on what is possible to do)
-     *  and that is responsible of doing what is done here. Do not forget about
-     *  unit test.
+     * User details as json from telegram chat.
+     *
+     * @since 1.0
+     * @todo #18:30min This class represents details about a user stored in
+     *  the database. Callers of PgUser.telegram relies on the datastructure
+     *  defined here and must know how it is structured to exploit the
+     *  information. Instead, extract interface from it and use it
+     *  everywhere it is needed instead of exposing this data. One
+     *  implementation is maybe based on Chat and another would be based on
+     *  a pg request for example. Add unit tests for both when it's done.
      */
-    private static JsonObject details(final Chat chat) {
-        final JsonObjectBuilder details = Json.createObjectBuilder()
-            .add("firstName", chat.getFirstName());
-        if (chat.getLastName() != null) {
-            details.add("lastName", chat.getLastName());
+    private static final class JsonUserDetails implements Scalar<JsonObject> {
+
+        /**
+         * Telegram chat with a user.
+         */
+        private final Chat chat;
+
+        /**
+         * Ctor.
+         * @param chat Telegram chat with a user
+         */
+        JsonUserDetails(final Chat chat) {
+            this.chat = chat;
         }
-        if (chat.getUserName() != null) {
-            details.add("userName", chat.getUserName());
+
+        @Override
+        public JsonObject value() {
+            final JsonObjectBuilder details = Json.createObjectBuilder()
+                .add("firstName", this.chat.getFirstName());
+            if (this.chat.getLastName() != null) {
+                details.add("lastName", this.chat.getLastName());
+            }
+            if (this.chat.getUserName() != null) {
+                details.add("userName", this.chat.getUserName());
+            }
+            details.add("uid", this.chat.getId());
+            return details.build();
         }
-        details.add("uid", chat.getId());
-        return details.build();
     }
 }
