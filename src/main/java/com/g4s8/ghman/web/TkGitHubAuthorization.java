@@ -36,7 +36,8 @@ import org.takes.rs.RsText;
  * @todo #4:30min replace those static loggers with something more OO
  *  (Related with
  *  https://www.yegor256.com/2019/03/19/logging-without-static-logger.html)
- * @todo #4:30min Implement unit tests for TkGitHubAuthorization
+ * @todo #4:30min Implement unit tests for TkGitHubAuthorization. Refer
+ *  to takes framework Unit testing guide @ https://github.com/yegor256/takes#unit-testing
  */
 final class TkGitHubAuthorization implements Take {
 
