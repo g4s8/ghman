@@ -103,4 +103,15 @@ public final class PgUser implements User {
     public long uid() {
         return this.id;
     }
+
+    @Override
+    public String tid() throws IOException {
+        try {
+            return new JdbcSession(this.data).sql(
+                "SELECT tid FROM users WHERE uid = ?"
+            ).set(this.id).select(new SingleOutcome<>(String.class));
+        } catch (final SQLException err) {
+            throw new IOException("Failed to select telegram id", err);
+        }
+    }
 }
