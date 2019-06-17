@@ -16,27 +16,65 @@
  */
 package com.g4s8.ghman.user;
 
+import java.time.Instant;
 import javax.json.Json;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
+import javax.json.JsonObject;
+import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.Test;
+import org.llorllale.cactoos.matchers.Assertion;
 
 /**
  * Test case for {@link GhThread}.
  *
  * @since 1.0
- * @checkstyle JavadocMethodCheck (500 lines)
  */
-public final class GhThreadTest {
+final class GhThreadTest {
 
     @Test
     void parseId() {
         final String tid = "4";
-        MatcherAssert.assertThat(
+        new Assertion<>(
+            "Must get thread id from json",
             new GhThread(
                 Json.createObjectBuilder().add("id", tid).build()
             ).tid(),
-            Matchers.equalTo(tid)
-        );
+            new IsEqual<>(tid)
+        ).affirm();
+    }
+
+    @Test
+    void returnsSubject() {
+        final JsonObject subj = Json.createObjectBuilder()
+            .add("title", "issue #3").add("link", "http://issues/3").build();
+        new Assertion<>(
+            "Must get subject from json",
+            new GhThread(
+                Json.createObjectBuilder().add("subject", subj).build()
+            ).subject(),
+            new IsEqual<>(subj)
+        ).affirm();
+    }
+
+    @Test
+    void returnsLastRead() {
+        final String date = "2019-12-03T10:15:30.00Z";
+        new Assertion<>(
+            "Must get last read from json",
+            new GhThread(
+                Json.createObjectBuilder().add("last_read_at", date).build()
+            ).lastRead(),
+            new IsEqual<>(Instant.parse(date))
+        ).affirm();
+    }
+
+    @Test
+    void returnsEpochWhenLastReadIsAbsent() {
+        new Assertion<>(
+            "Must get Instant.EPOCH as last read",
+            new GhThread(
+                Json.createObjectBuilder().build()
+            ).lastRead(),
+            new IsEqual<>(Instant.EPOCH)
+        ).affirm();
     }
 }
