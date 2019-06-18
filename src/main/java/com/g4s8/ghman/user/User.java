@@ -16,6 +16,7 @@
  */
 package com.g4s8.ghman.user;
 
+import com.jcabi.github.mock.MkGithub;
 import java.io.IOException;
 import javax.json.JsonObject;
 
@@ -58,4 +59,32 @@ public interface User {
      * @throws IOException When smth wrong
      */
     String tid() throws IOException;
+
+    final class Fake implements User {
+
+        @Override
+        public GhUser github() throws GhAuthException, IOException {
+            return new GhUser(new MkGithub());
+        }
+
+        @Override
+        public void authorize(final String token) throws IOException {
+
+        }
+
+        @Override
+        public JsonObject telegram() throws IOException {
+            return null;
+        }
+
+        @Override
+        public long uid() {
+            return 0;
+        }
+
+        @Override
+        public String tid() throws IOException {
+            return null;
+        }
+    }
 }

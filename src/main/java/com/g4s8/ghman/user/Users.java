@@ -46,4 +46,22 @@ public interface Users {
      * @throws IOException If fails
      */
     Iterable<User> active() throws IOException;
+
+    final class Fake implements Users {
+
+        @Override
+        public User user(final Chat chat) throws IOException {
+            return null;
+        }
+
+        @Override
+        public User user(final long uid) {
+            return null;
+        }
+
+        @Override
+        public Iterable<User> active() throws IOException {
+            return null;
+        }
+    }
 }
