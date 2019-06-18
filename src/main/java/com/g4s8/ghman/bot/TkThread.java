@@ -26,10 +26,8 @@ import com.g4s8.teletakes.rs.TmResponse;
 import com.g4s8.teletakes.tk.TmTake;
 import com.jcabi.github.Comment;
 import com.jcabi.github.Issue;
-import com.jcabi.github.User;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Map;
 import javax.sql.DataSource;
 import org.cactoos.iterable.IterableOf;
 import org.cactoos.list.Mapped;
@@ -116,7 +114,8 @@ public final class TkThread implements TmTake {
                             new MapEntry<>(
                                 "close",
                                 new FormattedText(
-                                    "click:notification.close#%d", thread.tid()
+                                    "click:notification.close?repo=%s&issue=%d",
+                                    issue.repo().coordinates(), issue.number()
                                 ).toString()
                             )
                         )

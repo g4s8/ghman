@@ -16,7 +16,7 @@
  */
 package com.g4s8.ghman.user;
 
-import com.jcabi.github.mock.MkGithub;
+import com.jcabi.github.Github;
 import java.io.IOException;
 import javax.json.JsonObject;
 
@@ -60,21 +60,38 @@ public interface User {
      */
     String tid() throws IOException;
 
+    /**
+     * Fake implementation for tests.
+     * @since 1.0
+     */
     final class Fake implements User {
+
+        /**
+         * Githab API.
+         */
+        private final Github github;
+
+        /**
+         * Ctor.
+         * @param github Github api
+         */
+        Fake(final Github github) {
+            this.github = github;
+        }
 
         @Override
         public GhUser github() throws GhAuthException, IOException {
-            return new GhUser(new MkGithub());
+            return new GhUser(this.github);
         }
 
         @Override
         public void authorize(final String token) throws IOException {
-
+            //does nothing
         }
 
         @Override
         public JsonObject telegram() throws IOException {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -84,7 +101,7 @@ public interface User {
 
         @Override
         public String tid() throws IOException {
-            return null;
+            throw new UnsupportedOperationException();
         }
     }
 }

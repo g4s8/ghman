@@ -17,26 +17,64 @@
 package com.g4s8.ghman.bot;
 
 import com.g4s8.ghman.user.Users;
+import com.jcabi.github.Repos;
+import com.jcabi.github.mock.MkGithub;
+import com.jcabi.matchers.XhtmlMatchers;
+import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.Assertion;
+import org.llorllale.cactoos.matchers.Throws;
 import org.mockito.Mockito;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 
 /**
  * Test for {@link TkCloseIssue}.
  * @since 1.0
  */
-public class TkCloseIssueTest {
+final class TkCloseIssueTest {
 
     @Test
-    void closesIssue() {
+    void closesIssue() throws IOException {
         final Update upd = Mockito.mock(Update.class);
         final CallbackQuery clbq = Mockito.mock(CallbackQuery.class);
+        final String user = "world";
+        final String repo = "city";
+        final MkGithub github = new MkGithub(user);
+        github.repos().create(new Repos.RepoCreate(repo, false))
+            .issues().create("illuminate traffic", "");
+        Mockito.when(clbq.getMessage()).thenReturn(Mockito.mock(Message.class));
+        Mockito.when(clbq.getData()).thenReturn(
+            String.format(
+                "click:notification.close?repo=%s/%s&issue=%d", user, repo, 1
+            )
+        );
         Mockito.when(upd.getCallbackQuery()).thenReturn(clbq);
-//        new Assertion<>(
-//            new TkCloseIssue(new Users.Fake()).act(new Up)
-//        )
+        new Assertion<>(
+            "Have to return message about successfully closed issue",
+            new TkCloseIssue(new Users.Fake(github)).act(upd).xml().toString(),
+            XhtmlMatchers.hasXPaths(
+                "response/message/text[.='Issue closed']"
+            )
+        ).affirm();
+    }
+
+    @Test
+    void throwsExceptionWhenRequestIsInvalid() {
+        final Update upd = Mockito.mock(Update.class);
+        final CallbackQuery clbq = Mockito.mock(CallbackQuery.class);
+        final String data = "some data";
+        Mockito.when(clbq.getData()).thenReturn(data);
+        Mockito.when(upd.getCallbackQuery()).thenReturn(clbq);
+        new Assertion<>(
+            "Should throw IllegalArgumentException",
+            () -> new TkCloseIssue(new Users.Fake(new MkGithub())).act(upd),
+            new Throws<>(
+                String.format("Illegal request: %s", data),
+                IllegalArgumentException.class
+            )
+        ).affirm();
     }
 
 }

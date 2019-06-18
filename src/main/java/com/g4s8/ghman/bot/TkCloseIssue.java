@@ -16,21 +16,28 @@
  */
 package com.g4s8.ghman.bot;
 
-import com.g4s8.ghman.user.GhUser;
-import com.g4s8.ghman.user.ThreadIssue;
 import com.g4s8.ghman.user.Users;
 import com.g4s8.teletakes.rs.RsText;
 import com.g4s8.teletakes.rs.TmResponse;
 import com.g4s8.teletakes.tk.TmTake;
+import com.jcabi.github.Coordinates;
 import com.jcabi.github.Issue;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.telegram.telegrambots.api.objects.Update;
 
 /**
  * Telegram take to close issue.
  * @since 1.0
  */
-public class TkCloseIssue implements TmTake {
+public final class TkCloseIssue implements TmTake {
+
+    /**
+     * Callback query pattern.
+     */
+    private static final Pattern PTN_QUERY =
+        Pattern.compile("click:notification.close\\?repo=(?<coords>.+/.+)&issue=(?<issue>\\d+)");
 
     /**
      * Users.
@@ -47,14 +54,23 @@ public class TkCloseIssue implements TmTake {
 
     @Override
     public TmResponse act(final Update upd) throws IOException {
-        final GhUser user = this.users.user(
-            upd.getCallbackQuery().getMessage().getChat()
-        ).github();
+        final Matcher matcher =
+            PTN_QUERY.matcher(upd.getCallbackQuery().getData());
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Illegal request: %s", upd.getCallbackQuery().getData()
+                )
+            );
+        }
         new Issue.Smart(
-            new ThreadIssue(
-                user.github(),
-                user.thread(upd.getCallbackQuery().getData().split("#")[1])
+            this.users.user(
+                upd.getCallbackQuery().getMessage().getChat()
             )
+            .github().github().repos().get(
+                new Coordinates.Simple(matcher.group("coords"))
+            )
+            .issues().get(Integer.parseInt(matcher.group("issue")))
         ).close();
         return new RsText("Issue closed");
     }
