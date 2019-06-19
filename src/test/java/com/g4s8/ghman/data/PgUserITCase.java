@@ -16,18 +16,27 @@
  */
 package com.g4s8.ghman.data;
 
+import com.g4s8.ghman.user.GhAuthException;
+import com.g4s8.ghman.user.User;
+import com.g4s8.hamcrest.json.JsonHas;
+import com.g4s8.hamcrest.json.JsonValueIs;
+import com.jcabi.github.RtGithub;
 import java.io.IOException;
+import org.cactoos.iterable.IterableOf;
+import org.cactoos.text.FormattedText;
+import org.hamcrest.core.AllOf;
+import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.Assertion;
 import org.llorllale.cactoos.matchers.Throws;
+import org.mockito.Mockito;
+import org.telegram.telegrambots.api.objects.Chat;
 
 /**
  * Test for {@link com.g4s8.ghman.data.PgUser}.
  * @since 1.0
- * @todo #7:30min Continue implement this integration test: add cases for all
- *  methods of {@link com.g4s8.ghman.data.PgUser} class. Do not forget about
- *  all possible exceptions.
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @ExtendWith(DatabaseExtension.class)
 final class PgUserITCase {
@@ -35,8 +44,8 @@ final class PgUserITCase {
     @Test
     void throwsExceptionIfUserIsNotFound() {
         new Assertion<>(
-            "Unexpected exception while selecting not existing user",
-            () -> new PgUser(DatabaseExtension.dataSource(), 0).github(),
+            "Should throw exception while selecting not existing user",
+            () -> new PgUser(DatabaseExtension.dataSource(), -1).github(),
             new Throws<>(
                 "Failed to select token",
                 IOException.class
@@ -44,4 +53,86 @@ final class PgUserITCase {
         ).affirm();
     }
 
+    @Test
+    void returnsUserId() {
+        final long uid = 45;
+        new Assertion<>(
+            "Should return user id",
+            new PgUser(DatabaseExtension.dataSource(), uid).uid(),
+            new IsEqual<>(uid)
+        ).affirm();
+    }
+
+    @Test
+    void throwsExceptionIfTokenIsEmpty() throws IOException {
+        final User user = new PgUsers(DatabaseExtension.dataSource())
+            .user(getChat(458L, "test1"));
+        user.authorize("");
+        new Assertion<>(
+            "Should throw exception if token is empty",
+            user::github,
+            new Throws<>(
+                "Github token was not found",
+                GhAuthException.class
+            )
+        ).affirm();
+    }
+
+    @Test
+    void returnsGhUser() throws IOException {
+        final User user = new PgUsers(DatabaseExtension.dataSource())
+            .user(getChat(408L, "test2"));
+        final String token = "some_token";
+        user.authorize(token);
+        new Assertion<>(
+            new FormattedText(
+                "Should return github API instance with token %s", token
+            ).toString(),
+            user.github().github(),
+            new IsEqual<>(new RtGithub(token))
+        ).affirm();
+    }
+
+    @Test
+    void returnsTelegramId() throws IOException {
+        final long tid = 409L;
+        final User user = new PgUsers(DatabaseExtension.dataSource())
+            .user(getChat(tid, "test3"));
+        new Assertion<>(
+            "Should return telegram id",
+            user.tid(),
+            new IsEqual<>(String.valueOf(tid))
+        ).affirm();
+    }
+
+    @Test
+    void returnsTelegram() throws IOException {
+        final long tid = 401L;
+        final String uname = "test4";
+        final User user = new PgUsers(DatabaseExtension.dataSource())
+            .user(getChat(tid, uname));
+        new Assertion<>(
+            "Should return json with telegram name and id",
+            user.telegram(),
+            new AllOf<>(
+                new IterableOf<>(
+                    new JsonHas("firstName", new JsonValueIs(uname)),
+                    new JsonHas("uid", new JsonValueIs(tid))
+                )
+            )
+        ).affirm();
+    }
+
+    /**
+     * Configures {@link Chat} mock for tests.
+     * @param tid Telegtam id
+     * @param umane User name
+     * @return Mocked {@link Chat} instance
+     */
+    private static Chat getChat(final long tid, final String umane) {
+        final Chat chat = Mockito.mock(Chat.class);
+        Mockito.when(chat.getId()).thenReturn(tid);
+        Mockito.when(chat.getFirstName()).thenReturn(umane);
+        return chat;
+    }
 }
