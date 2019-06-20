@@ -16,10 +16,10 @@
  */
 package com.g4s8.ghman.bot;
 
-import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.user.GhThread;
 import com.g4s8.ghman.user.GhUser;
 import com.g4s8.ghman.user.ThreadIssue;
+import com.g4s8.ghman.user.Users;
 import com.g4s8.teletakes.rs.RsText;
 import com.g4s8.teletakes.rs.TmResponse;
 import com.g4s8.teletakes.tk.TmTake;
@@ -27,7 +27,6 @@ import com.jcabi.github.Comment;
 import com.jcabi.github.Issue;
 import java.io.IOException;
 import java.util.Date;
-import javax.sql.DataSource;
 import org.cactoos.list.Mapped;
 import org.cactoos.text.FormattedText;
 import org.cactoos.text.Joined;
@@ -49,19 +48,19 @@ public final class TkThread implements TmTake {
     /**
      * Data source.
      */
-    private final DataSource data;
+    private final Users users;
 
     /**
      * Ctor.
-     * @param data Data source
+     * @param users Users
      */
-    public TkThread(final DataSource data) {
-        this.data = data;
+    public TkThread(final Users users) {
+        this.users = users;
     }
 
     @Override
     public TmResponse act(final Update update) throws IOException {
-        final GhUser user = new PgUsers(this.data)
+        final GhUser user = this.users
             .user(update.getCallbackQuery().getMessage().getChat())
             .github();
         final GhThread thread = user.thread(update.getCallbackQuery().getData().split("#")[1]);

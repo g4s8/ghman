@@ -16,9 +16,9 @@
  */
 package com.g4s8.ghman.bot;
 
-import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.user.GhUser;
 import com.g4s8.ghman.user.Thread;
+import com.g4s8.ghman.user.Users;
 import com.g4s8.teletakes.rs.RsInlineKeyboard;
 import com.g4s8.teletakes.rs.RsText;
 import com.g4s8.teletakes.rs.TmResponse;
@@ -26,7 +26,6 @@ import com.g4s8.teletakes.tk.TmTake;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import javax.sql.DataSource;
 import org.cactoos.list.Mapped;
 import org.cactoos.list.Solid;
 import org.cactoos.map.MapEntry;
@@ -45,19 +44,19 @@ public final class TkNotifications implements TmTake {
     /**
      * Data source.
      */
-    private final DataSource data;
+    private final Users users;
 
     /**
      * Ctor.
-     * @param data Data source
+     * @param users Users
      */
-    public TkNotifications(final DataSource data) {
-        this.data = data;
+    public TkNotifications(final Users users) {
+        this.users = users;
     }
 
     @Override
     public TmResponse act(final Update update) throws IOException {
-        final GhUser user = new PgUsers(this.data).user(update.getMessage().getChat()).github();
+        final GhUser user = this.users.user(update.getMessage().getChat()).github();
         final List<Thread> nts = new Solid<>(user.notifications());
         return new RsInlineKeyboard(
             new RsText(new FormattedText("You have %d unread notifications:", nts.size())),

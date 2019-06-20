@@ -16,6 +16,7 @@
  */
 package com.g4s8.ghman.bot;
 
+import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.teletakes.bot.BotSimple;
 import com.g4s8.teletakes.fk.FkCallbackQuery;
 import com.g4s8.teletakes.fk.FkCommand;
@@ -88,11 +89,11 @@ public final class BotApp implements Runnable {
                         new TkFork(
                             new FkCommand(
                                 "/notifications",
-                                    new TkNotifications(this.data)
+                                    new TkNotifications(new PgUsers(this.data))
                             ),
                             new FkCallbackQuery(
                                 Pattern.compile("click:notification#(?<tid>[A-Za-z0-9]+)"),
-                                    new TkThread(this.data)
+                                    new TkThread(new PgUsers(this.data))
                             )
                         ),
                         new FbUnauthorized()
