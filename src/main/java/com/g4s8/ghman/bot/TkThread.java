@@ -37,6 +37,7 @@ import org.cactoos.scalar.Unchecked;
 import org.cactoos.text.FormattedText;
 import org.cactoos.text.Joined;
 import org.cactoos.text.TextOf;
+import org.cactoos.text.UncheckedText;
 import org.telegram.telegrambots.api.objects.Update;
 
 /**
@@ -113,10 +114,12 @@ public final class TkThread implements TmTake {
                         new IterableOf<>(
                             new MapEntry<>(
                                 "close",
-                                new FormattedText(
-                                    "click:notification.close?repo=%s&issue=%d",
-                                    issue.repo().coordinates(), issue.number()
-                                ).toString()
+                                new UncheckedText(
+                                    new FormattedText(
+                                        "click:notification.close?repo=%s&issue=%d",
+                                        issue.repo().coordinates(), issue.number()
+                                    )
+                                ).asString()
                             )
                         )
                     )

@@ -25,11 +25,18 @@ import com.jcabi.github.Issue;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.cactoos.text.FormattedText;
+import org.cactoos.text.UncheckedText;
 import org.telegram.telegrambots.api.objects.Update;
 
 /**
  * Telegram take to close issue.
  * @since 1.0
+ * @todo #11:30mins 1) find a way to avoid using static method Integer.parseInt()
+ *  2) there too much method chaining in Issue.Smart() instance creation. It's
+ *  hard to read and not very good in term of OO practice: we depend here on
+ *  many objects and we want to promote loose coupling usually. Find a way to
+ *  avoid it.
  */
 public final class TkCloseIssue implements TmTake {
 
@@ -58,9 +65,11 @@ public final class TkCloseIssue implements TmTake {
             PTN_QUERY.matcher(upd.getCallbackQuery().getData());
         if (!matcher.matches()) {
             throw new IllegalArgumentException(
-                String.format(
-                    "Illegal request: %s", upd.getCallbackQuery().getData()
-                )
+                new UncheckedText(
+                    new FormattedText(
+                        "Illegal request: %s", upd.getCallbackQuery().getData()
+                    )
+                ).asString()
             );
         }
         new Issue.Smart(
