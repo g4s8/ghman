@@ -23,7 +23,6 @@ import com.g4s8.hamcrest.json.JsonValueIs;
 import com.jcabi.github.RtGithub;
 import java.io.IOException;
 import org.cactoos.iterable.IterableOf;
-import org.cactoos.text.FormattedText;
 import org.hamcrest.core.AllOf;
 import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.Test;
@@ -54,6 +53,30 @@ final class PgUserITCase {
     }
 
     @Test
+    void throwsExceptionIfUserTelegramDataNotFound() {
+        new Assertion<>(
+            "Should throw exception while selecting tname for not existing user",
+            () -> new PgUser(DatabaseExtension.dataSource(), -1).telegram(),
+            new Throws<>(
+                "Failed to select telegram data",
+                IOException.class
+            )
+        ).affirm();
+    }
+
+    @Test
+    void throwsExceptionIfUserTelegramIdNotFound() {
+        new Assertion<>(
+            "Should throw exception while selecting tid for not existing user",
+            () -> new PgUser(DatabaseExtension.dataSource(), -1).tid(),
+            new Throws<>(
+                "Failed to select telegram id",
+                IOException.class
+            )
+        ).affirm();
+    }
+
+    @Test
     void returnsUserId() {
         final long uid = 45;
         new Assertion<>(
@@ -66,7 +89,7 @@ final class PgUserITCase {
     @Test
     void throwsExceptionIfTokenIsEmpty() throws IOException {
         final User user = new PgUsers(DatabaseExtension.dataSource())
-            .user(getChat(458L, "test1"));
+            .user(mockChat(458L, "test1"));
         user.authorize("");
         new Assertion<>(
             "Should throw exception if token is empty",
@@ -81,13 +104,11 @@ final class PgUserITCase {
     @Test
     void returnsGhUser() throws IOException {
         final User user = new PgUsers(DatabaseExtension.dataSource())
-            .user(getChat(408L, "test2"));
+            .user(mockChat(408L, "test2"));
         final String token = "some_token";
         user.authorize(token);
         new Assertion<>(
-            new FormattedText(
-                "Should return github API instance with token %s", token
-            ).toString(),
+            "Should return github API instance with token",
             user.github().github(),
             new IsEqual<>(new RtGithub(token))
         ).affirm();
@@ -97,7 +118,7 @@ final class PgUserITCase {
     void returnsTelegramId() throws IOException {
         final long tid = 409L;
         final User user = new PgUsers(DatabaseExtension.dataSource())
-            .user(getChat(tid, "test3"));
+            .user(mockChat(tid, "test3"));
         new Assertion<>(
             "Should return telegram id",
             user.tid(),
@@ -110,7 +131,7 @@ final class PgUserITCase {
         final long tid = 401L;
         final String uname = "test4";
         final User user = new PgUsers(DatabaseExtension.dataSource())
-            .user(getChat(tid, uname));
+            .user(mockChat(tid, uname));
         new Assertion<>(
             "Should return json with telegram name and id",
             user.telegram(),
@@ -129,7 +150,7 @@ final class PgUserITCase {
      * @param umane User name
      * @return Mocked {@link Chat} instance
      */
-    private static Chat getChat(final long tid, final String umane) {
+    private static Chat mockChat(final long tid, final String umane) {
         final Chat chat = Mockito.mock(Chat.class);
         Mockito.when(chat.getId()).thenReturn(tid);
         Mockito.when(chat.getFirstName()).thenReturn(umane);
