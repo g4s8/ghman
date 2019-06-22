@@ -32,7 +32,7 @@ import javax.json.JsonObject;
 import org.cactoos.Scalar;
 import org.cactoos.scalar.IoChecked;
 import org.cactoos.scalar.SolidScalar;
-import org.cactoos.scalar.UncheckedScalar;
+import org.cactoos.scalar.Unchecked;
 
 /**
  * Issue for thread.
@@ -88,47 +88,47 @@ public final class ThreadIssue implements Issue {
 
     @Override
     public Repo repo() {
-        return new UncheckedScalar<>(this.scalar).value().repo();
+        return new Unchecked<>(this.scalar).value().repo();
     }
 
     @Override
     public int number() {
-        return new UncheckedScalar<>(this.scalar).value().number();
+        return new Unchecked<>(this.scalar).value().number();
     }
 
     @Override
     public Comments comments() {
-        return new UncheckedScalar<>(this.scalar).value().comments();
+        return new Unchecked<>(this.scalar).value().comments();
     }
 
     @Override
     public IssueLabels labels() {
-        return new UncheckedScalar<>(this.scalar).value().labels();
+        return new Unchecked<>(this.scalar).value().labels();
     }
 
     @Override
     public Iterable<Event> events() throws IOException {
-        return new UncheckedScalar<>(this.scalar).value().events();
+        return new Unchecked<>(this.scalar).value().events();
     }
 
     @Override
     public boolean exists() throws IOException {
-        return new UncheckedScalar<>(this.scalar).value().exists();
+        return new Unchecked<>(this.scalar).value().exists();
     }
 
     @Override
     public void patch(final JsonObject json) throws IOException {
-        new UncheckedScalar<>(this.scalar).value().patch(json);
+        new Unchecked<>(this.scalar).value().patch(json);
     }
 
     @Override
     public JsonObject json() throws IOException {
-        return new UncheckedScalar<>(this.scalar).value().json();
+        return new Unchecked<>(this.scalar).value().json();
     }
 
     @Override
     public int compareTo(final Issue issue) {
-        return new UncheckedScalar<>(this.scalar).value().compareTo(issue);
+        return new Unchecked<>(this.scalar).value().compareTo(issue);
     }
 
     @Override
@@ -136,8 +136,8 @@ public final class ThreadIssue implements Issue {
         final boolean eql;
         if (obj instanceof ThreadIssue) {
             eql = Objects.equals(
-                new UncheckedScalar<>(this.scalar).value(),
-                new UncheckedScalar<>(ThreadIssue.class.cast(obj).scalar)
+                new Unchecked<>(this.scalar).value(),
+                new Unchecked<>(ThreadIssue.class.cast(obj).scalar)
                     .value()
             );
         } else {
@@ -148,6 +148,6 @@ public final class ThreadIssue implements Issue {
 
     @Override
     public int hashCode() {
-        return Objects.hash(new UncheckedScalar<>(this.scalar).value());
+        return Objects.hash(new Unchecked<>(this.scalar).value());
     }
 }
