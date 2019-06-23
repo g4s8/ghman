@@ -16,7 +16,7 @@
  */
 package com.g4s8.ghman.bot;
 
-import com.g4s8.ghman.data.PgUsers;
+import com.g4s8.ghman.user.Users;
 import com.g4s8.teletakes.bot.BotSimple;
 import com.g4s8.teletakes.fk.FkCallbackQuery;
 import com.g4s8.teletakes.fk.FkCommand;
@@ -25,7 +25,6 @@ import com.g4s8.teletakes.tk.TkFork;
 import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.util.regex.Pattern;
-import javax.sql.DataSource;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
@@ -62,21 +61,21 @@ public final class BotApp implements Runnable {
     private final TelegramBotsApi api;
 
     /**
-     * Data source.
+     * Users.
      */
-    private final DataSource data;
+    private final Users users;
 
     /**
      * Ctor.
      * @param name Bot name
      * @param token Bot token
-     * @param data Data source
+     * @param users Users
      */
     public BotApp(final String name,
-        final String token, final DataSource data) {
+        final String token, final Users users) {
         this.name = name;
         this.token = token;
-        this.data = data;
+        this.users = users;
         this.api = new TelegramBotsApi();
     }
 
@@ -89,11 +88,11 @@ public final class BotApp implements Runnable {
                         new TkFork(
                             new FkCommand(
                                 "/notifications",
-                                    new TkNotifications(new PgUsers(this.data))
+                                    new TkNotifications(this.users)
                             ),
                             new FkCallbackQuery(
                                 Pattern.compile("click:notification#(?<tid>[A-Za-z0-9]+)"),
-                                    new TkThread(new PgUsers(this.data))
+                                    new TkThread(this.users)
                             )
                         ),
                         new FbUnauthorized()
