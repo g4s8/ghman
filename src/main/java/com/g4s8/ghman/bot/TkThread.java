@@ -46,7 +46,7 @@ import org.telegram.telegrambots.api.objects.Update;
 public final class TkThread implements TmTake {
 
     /**
-     * Data source.
+     * Users.
      */
     private final Users users;
 
