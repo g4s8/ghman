@@ -18,6 +18,7 @@ package com.g4s8.ghman;
 
 import com.g4s8.ghman.bot.BotApp;
 import com.g4s8.ghman.data.FlywayDataSource;
+import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.data.SimpleDataSource;
 import com.g4s8.ghman.web.WebApp;
 import com.jcabi.log.VerboseRunnable;
@@ -65,7 +66,7 @@ public final class App {
                 new BotApp(
                     System.getenv("TG_NAME"),
                     System.getenv("TG_TOKEN"),
-                    data
+                    new PgUsers(data)
                 )
             )
         );
