@@ -18,30 +18,27 @@ package com.g4s8.ghman.data;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.Arrays;
 import javax.sql.DataSource;
+import org.cactoos.list.ListOf;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.postgresql.jdbc2.optional.SimpleDataSource;
+import org.postgresql.ds.PGSimpleDataSource;
 import ru.yandex.qatools.embed.postgresql.EmbeddedPostgres;
 import ru.yandex.qatools.embed.postgresql.distribution.Version;
 
 /**
- * Database abstract case.
+ * JUnit 5 extension to set up database. This extension is meant to be used in
+ * all database related integration tests.
  * @since 1.0
- * @todo #7:30min Find a way to get rid of static field and method of this
- *  class. Note that this class is JUnit 5 Extension and is used to prepare
- *  database to integration tests. See
- *  https://junit.org/junit5/docs/current/user-guide/#extensions-registration-declarative
  */
 final class DatabaseExtension implements BeforeAllCallback, AfterAllCallback {
 
     /**
      * Data source.
      */
-    private static DataSource src;
+    private final PGSimpleDataSource src = new PGSimpleDataSource();
 
     /**
      * Embedded postgres.
@@ -51,18 +48,14 @@ final class DatabaseExtension implements BeforeAllCallback, AfterAllCallback {
 
     @Override
     public void beforeAll(final ExtensionContext context) throws Exception {
-        final SimpleDataSource dsrc = new SimpleDataSource();
-        dsrc.setUrl(this.postgres.start());
-        DatabaseExtension.src = dsrc;
-        final Flyway flyway = new Flyway();
-        flyway.setDataSource(DatabaseExtension.src);
-        flyway.migrate();
+        this.src.setUrl(this.postgres.start());
+        Flyway.configure().dataSource(this.src).load().migrate();
     }
 
     @Override
     public void afterAll(final ExtensionContext context) throws Exception {
-        try (Connection con = DatabaseExtension.src.getConnection()) {
-            for (final String sql : Arrays.asList(
+        try (Connection con = this.src.getConnection()) {
+            for (final String sql : new ListOf<>(
                 "DROP SCHEMA public CASCADE",
                 "CREATE SCHEMA public",
                 "GRANT ALL ON SCHEMA public TO postgres",
@@ -73,16 +66,14 @@ final class DatabaseExtension implements BeforeAllCallback, AfterAllCallback {
                 }
             }
         }
-        if (DatabaseExtension.src != null) {
-            this.postgres.stop();
-        }
+        this.postgres.stop();
     }
 
     /**
      * Data source.
      * @return Data source
      */
-    static DataSource dataSource() {
-        return DatabaseExtension.src;
+    DataSource database() {
+        return this.src;
     }
 }

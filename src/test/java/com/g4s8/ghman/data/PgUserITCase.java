@@ -18,7 +18,7 @@ package com.g4s8.ghman.data;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.llorllale.cactoos.matchers.Assertion;
 import org.llorllale.cactoos.matchers.Throws;
 
@@ -29,14 +29,20 @@ import org.llorllale.cactoos.matchers.Throws;
  *  methods of {@link com.g4s8.ghman.data.PgUser} class. Do not forget about
  *  all possible exceptions.
  */
-@ExtendWith(DatabaseExtension.class)
 final class PgUserITCase {
+
+    /**
+     * Database.
+     * @checkstyle VisibilityModifierCheck (5 lines)
+     */
+    @RegisterExtension
+    static DatabaseExtension source = new DatabaseExtension();
 
     @Test
     void throwsExceptionIfUserIsNotFound() {
         new Assertion<>(
             "Unexpected exception while selecting not existing user",
-            () -> new PgUser(DatabaseExtension.dataSource(), 0).github(),
+            () -> new PgUser(source.database(), 0).github(),
             new Throws<>(
                 "Failed to select token",
                 IOException.class
