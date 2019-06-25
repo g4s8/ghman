@@ -36,7 +36,7 @@ final class PgUserITCase {
      * @checkstyle VisibilityModifierCheck (5 lines)
      */
     @RegisterExtension
-    DatabaseExtension source = new DatabaseExtension();
+    final DatabaseExtension source = new DatabaseExtension();
 
     @Test
     void throwsExceptionIfUserIsNotFound() {
