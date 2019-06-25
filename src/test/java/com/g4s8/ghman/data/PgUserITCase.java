@@ -36,13 +36,13 @@ final class PgUserITCase {
      * @checkstyle VisibilityModifierCheck (5 lines)
      */
     @RegisterExtension
-    static DatabaseExtension source = new DatabaseExtension();
+    DatabaseExtension source = new DatabaseExtension();
 
     @Test
     void throwsExceptionIfUserIsNotFound() {
         new Assertion<>(
             "Unexpected exception while selecting not existing user",
-            () -> new PgUser(source.database(), 0).github(),
+            () -> new PgUser(this.source.database(), 0).github(),
             new Throws<>(
                 "Failed to select token",
                 IOException.class

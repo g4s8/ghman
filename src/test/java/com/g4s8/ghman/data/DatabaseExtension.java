@@ -21,8 +21,8 @@ import java.sql.PreparedStatement;
 import javax.sql.DataSource;
 import org.cactoos.list.ListOf;
 import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.postgresql.ds.PGSimpleDataSource;
 import ru.yandex.qatools.embed.postgresql.EmbeddedPostgres;
@@ -33,7 +33,7 @@ import ru.yandex.qatools.embed.postgresql.distribution.Version;
  * all database related integration tests.
  * @since 1.0
  */
-final class DatabaseExtension implements BeforeAllCallback, AfterAllCallback {
+public final class DatabaseExtension implements BeforeEachCallback, AfterEachCallback {
 
     /**
      * Data source.
@@ -43,17 +43,16 @@ final class DatabaseExtension implements BeforeAllCallback, AfterAllCallback {
     /**
      * Embedded postgres.
      */
-    private final EmbeddedPostgres postgres =
-        new EmbeddedPostgres(Version.V11_1);
+    private final EmbeddedPostgres postgres = new EmbeddedPostgres(Version.V11_1);
 
     @Override
-    public void beforeAll(final ExtensionContext context) throws Exception {
+    public void beforeEach(final ExtensionContext context) throws Exception {
         this.src.setUrl(this.postgres.start());
         Flyway.configure().dataSource(this.src).load().migrate();
     }
 
     @Override
-    public void afterAll(final ExtensionContext context) throws Exception {
+    public void afterEach(final ExtensionContext context) throws Exception {
         try (Connection con = this.src.getConnection()) {
             for (final String sql : new ListOf<>(
                 "DROP SCHEMA public CASCADE",
@@ -73,7 +72,7 @@ final class DatabaseExtension implements BeforeAllCallback, AfterAllCallback {
      * Data source.
      * @return Data source
      */
-    DataSource database() {
+    public DataSource database() {
         return this.src;
     }
 }
