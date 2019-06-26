@@ -112,6 +112,12 @@
     </dependency>
     <dependency>
       <groupId>com.jcabi</groupId>
+      <artifactId>jcabi-matchers</artifactId>
+      <version>1.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.jcabi</groupId>
       <artifactId>jcabi-http</artifactId>
       <version>1.17.2</version>
     </dependency>
@@ -146,7 +152,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>9.4-1201-jdbc4</version>
+      <version>42.2.5</version>
     </dependency>
     <dependency>
       <groupId>javax.json</groupId>
@@ -327,7 +333,7 @@
                         <limit>
                           <counter>CLASS</counter>
                           <value>MISSEDCOUNT</value>
-                          <maximum>25</maximum>
+                          <maximum>26</maximum>
                         </limit>
                       </limits>
                     </rule>

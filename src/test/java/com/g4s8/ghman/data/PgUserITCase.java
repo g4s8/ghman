@@ -26,7 +26,7 @@ import org.cactoos.iterable.IterableOf;
 import org.hamcrest.core.AllOf;
 import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.llorllale.cactoos.matchers.Assertion;
 import org.llorllale.cactoos.matchers.Throws;
 import org.mockito.Mockito;
@@ -37,14 +37,20 @@ import org.telegram.telegrambots.api.objects.Chat;
  * @since 1.0
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-@ExtendWith(DatabaseExtension.class)
 final class PgUserITCase {
+
+    /**
+     * Database.
+     * @checkstyle VisibilityModifierCheck (5 lines)
+     */
+    @RegisterExtension
+    final DatabaseExtension source = new DatabaseExtension();
 
     @Test
     void throwsExceptionIfUserIsNotFound() {
         new Assertion<>(
             "Should throw exception while selecting not existing user",
-            () -> new PgUser(DatabaseExtension.dataSource(), -1).github(),
+            () -> new PgUser(this.source.database(), -1).github(),
             new Throws<>(
                 "Failed to select token",
                 IOException.class
@@ -56,7 +62,7 @@ final class PgUserITCase {
     void throwsExceptionIfUserTelegramDataNotFound() {
         new Assertion<>(
             "Should throw exception while selecting tname for not existing user",
-            () -> new PgUser(DatabaseExtension.dataSource(), -1).telegram(),
+            () -> new PgUser(this.source.database(), -1).telegram(),
             new Throws<>(
                 "Failed to select telegram data",
                 IOException.class
@@ -68,7 +74,7 @@ final class PgUserITCase {
     void throwsExceptionIfUserTelegramIdNotFound() {
         new Assertion<>(
             "Should throw exception while selecting tid for not existing user",
-            () -> new PgUser(DatabaseExtension.dataSource(), -1).tid(),
+            () -> new PgUser(this.source.database(), -1).tid(),
             new Throws<>(
                 "Failed to select telegram id",
                 IOException.class
@@ -81,14 +87,14 @@ final class PgUserITCase {
         final long uid = 45;
         new Assertion<>(
             "Should return user id",
-            new PgUser(DatabaseExtension.dataSource(), uid).uid(),
+            new PgUser(this.source.database(), uid).uid(),
             new IsEqual<>(uid)
         ).affirm();
     }
 
     @Test
     void throwsExceptionIfTokenIsEmpty() throws IOException {
-        final User user = new PgUsers(DatabaseExtension.dataSource())
+        final User user = new PgUsers(this.source.database())
             .user(mockChat(458L, "test1"));
         user.authorize("");
         new Assertion<>(
@@ -103,7 +109,7 @@ final class PgUserITCase {
 
     @Test
     void returnsGhUser() throws IOException {
-        final User user = new PgUsers(DatabaseExtension.dataSource())
+        final User user = new PgUsers(this.source.database())
             .user(mockChat(408L, "test2"));
         final String token = "some_token";
         user.authorize(token);
@@ -117,7 +123,7 @@ final class PgUserITCase {
     @Test
     void returnsTelegramId() throws IOException {
         final long tid = 409L;
-        final User user = new PgUsers(DatabaseExtension.dataSource())
+        final User user = new PgUsers(this.source.database())
             .user(mockChat(tid, "test3"));
         new Assertion<>(
             "Should return telegram id",
@@ -130,7 +136,7 @@ final class PgUserITCase {
     void returnsTelegram() throws IOException {
         final long tid = 401L;
         final String uname = "test4";
-        final User user = new PgUsers(DatabaseExtension.dataSource())
+        final User user = new PgUsers(this.source.database())
             .user(mockChat(tid, uname));
         new Assertion<>(
             "Should return json with telegram name and id",

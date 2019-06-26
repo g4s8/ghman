@@ -16,6 +16,7 @@
  */
 package com.g4s8.ghman.user;
 
+import com.jcabi.github.Github;
 import java.io.IOException;
 import org.telegram.telegrambots.api.objects.Chat;
 
@@ -46,4 +47,39 @@ public interface Users {
      * @throws IOException If fails
      */
     Iterable<User> active() throws IOException;
+
+    /**
+     * Fake implementation for tests.
+     * @since 1.0
+     */
+    final class Fake implements Users {
+
+        /**
+         * Github API.
+         */
+        private final Github github;
+
+        /**
+         * Ctor.
+         * @param github Github api
+         */
+        public Fake(final Github github) {
+            this.github = github;
+        }
+
+        @Override
+        public User user(final Chat chat) throws IOException {
+            return new User.Fake(this.github);
+        }
+
+        @Override
+        public User user(final long uid) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Iterable<User> active() throws IOException {
+            throw new UnsupportedOperationException();
+        }
+    }
 }

@@ -16,10 +16,11 @@
  */
 package com.g4s8.ghman.bot;
 
-import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.user.GhThread;
 import com.g4s8.ghman.user.GhUser;
 import com.g4s8.ghman.user.ThreadIssue;
+import com.g4s8.ghman.user.Users;
+import com.g4s8.teletakes.rs.RsInlineKeyboard;
 import com.g4s8.teletakes.rs.RsText;
 import com.g4s8.teletakes.rs.TmResponse;
 import com.g4s8.teletakes.tk.TmTake;
@@ -27,11 +28,15 @@ import com.jcabi.github.Comment;
 import com.jcabi.github.Issue;
 import java.io.IOException;
 import java.util.Date;
-import javax.sql.DataSource;
+import org.cactoos.iterable.IterableOf;
 import org.cactoos.list.Mapped;
+import org.cactoos.map.MapEntry;
+import org.cactoos.scalar.Ternary;
+import org.cactoos.scalar.Unchecked;
 import org.cactoos.text.FormattedText;
 import org.cactoos.text.Joined;
 import org.cactoos.text.TextOf;
+import org.cactoos.text.UncheckedText;
 import org.telegram.telegrambots.api.objects.Update;
 
 /**
@@ -47,26 +52,29 @@ import org.telegram.telegrambots.api.objects.Update;
 public final class TkThread implements TmTake {
 
     /**
-     * Data source.
+     * Users.
      */
-    private final DataSource data;
+    private final Users users;
 
     /**
      * Ctor.
-     * @param data Data source
+     * @param users Users
      */
-    public TkThread(final DataSource data) {
-        this.data = data;
+    public TkThread(final Users users) {
+        this.users = users;
     }
 
     @Override
     public TmResponse act(final Update update) throws IOException {
-        final GhUser user = new PgUsers(this.data)
+        final GhUser user = this.users
             .user(update.getCallbackQuery().getMessage().getChat())
             .github();
-        final GhThread thread = user.thread(update.getCallbackQuery().getData().split("#")[1]);
+        final GhThread thread = user.thread(
+            update.getCallbackQuery().getData().split("#")[1]
+        );
         final Issue issue = new ThreadIssue(user.github(), thread);
-        return new RsText(
+        final Issue.Smart smart = new Issue.Smart(issue);
+        final TmResponse text = new RsText(
             new FormattedText(
                 "[#%d](%s) - %s\n\n%s",
                 issue.number(),
@@ -75,23 +83,48 @@ public final class TkThread implements TmTake {
                     issue.repo().coordinates(),
                     issue.number()
                 ).toString(),
-                new Issue.Smart(issue).title(),
+                smart.title(),
                 new Joined(
                     new TextOf("\n\n"),
                     new Mapped<>(
                         cmt -> new FormattedText(
-                        "[@%s](https://github.com/%s) > %s",
-                        cmt.author().login(),
-                        cmt.author().login(),
-                        cmt.body()
+                            "[@%s](https://github.com/%s) > %s",
+                            cmt.author().login(),
+                            cmt.author().login(),
+                            cmt.body()
                         ),
                         new Mapped<>(
                             Comment.Smart::new,
-                            issue.comments().iterate(new Date(thread.lastRead().toEpochMilli()))
+                            issue.comments().iterate(
+                                new Date(thread.lastRead().toEpochMilli())
+                            )
                         )
                     )
                 )
             )
         );
+        return new Unchecked<>(
+            new Ternary<>(
+                () -> smart.isOpen()
+                    && smart.author().equals(user.github().users().self()),
+                new RsInlineKeyboard(
+                    text,
+                    new IterableOf<>(
+                        new IterableOf<>(
+                            new MapEntry<>(
+                                "close",
+                                new UncheckedText(
+                                    new FormattedText(
+                                        "click:notification.close?repo=%s&issue=%d",
+                                        issue.repo().coordinates(), issue.number()
+                                    )
+                                ).asString()
+                            )
+                        )
+                    )
+                ),
+                text
+            )
+        ).value();
     }
 }
