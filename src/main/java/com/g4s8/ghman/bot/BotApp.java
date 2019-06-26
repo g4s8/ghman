@@ -36,6 +36,12 @@ import org.telegram.telegrambots.generics.BotSession;
  * @since 1.0
  * @todo #2:30mins Fix the ClassDataAbstractionCouplingCheck & PMD rule
  *  exclusions in BotApp class
+ * @todo #11:30mins Patterns in callback queries chains are distributed in
+ *  multiple classes: for example, pattern for close issue is given here and in
+ *  TkCloseIssue. Find a way to avoid this by maybe having string pattern
+ *  representation here and passing Matcher to telegram takes (TkCloseIssue) or
+ *  by having one class implementing Fork and containing both the current code
+ *  of TkCloseIssue and the creation of the FkCallbackQuery.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
@@ -92,7 +98,12 @@ public final class BotApp implements Runnable {
                             ),
                             new FkCallbackQuery(
                                 Pattern.compile("click:notification#(?<tid>[A-Za-z0-9]+)"),
-                                    new TkThread(this.users)
+                                new TkThread(this.users)
+                            ),
+                            new FkCallbackQuery(
+                                //@checkstyle LineLengthCheck (1 line)
+                                Pattern.compile("click:notification.close\\?repo=(?<coords>.+/.+)&issue=(?<issue>\\d+)"),
+                                new TkCloseIssue(this.users)
                             )
                         ),
                         new FbUnauthorized()
