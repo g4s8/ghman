@@ -16,6 +16,7 @@
  */
 package com.g4s8.ghman.bot;
 
+import com.g4s8.ghman.env.EnvironmentVariables;
 import com.g4s8.ghman.user.Users;
 import com.g4s8.teletakes.bot.BotSimple;
 import com.g4s8.teletakes.fk.FkCallbackQuery;
@@ -106,7 +107,7 @@ public final class BotApp implements Runnable {
                                 new TkCloseIssue(this.users)
                             )
                         ),
-                        new FbUnauthorized()
+                        new FbUnauthorized(new EnvironmentVariables())
                     )
                 ),
                 this.name, this.token
