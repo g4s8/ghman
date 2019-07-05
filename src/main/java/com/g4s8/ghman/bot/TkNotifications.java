@@ -36,8 +36,6 @@ import org.telegram.telegrambots.api.objects.Update;
  * Telegram bot Notification Command.
  *
  * @since 1.0
- * @todo #2:30min Implement Unit tests for TkNotifications class. Refer
- *  to takes framework Unit testing guide @ https://github.com/yegor256/takes#unit-testing
  */
 public final class TkNotifications implements TmTake {
 
