@@ -64,7 +64,7 @@ public final class TkNotifications implements TmTake {
                 ntf -> Collections.singleton(
                     new MapEntry<>(
                         ntf.subject().getString("title"),
-                        new FormattedText("click:notification#%s", ntf.tid()).toString()
+                        new FormattedText("click:notification#%s", ntf.tid()).asString()
                     )
                 ),
                 nts
