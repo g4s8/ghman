@@ -18,6 +18,7 @@ package com.g4s8.ghman.user;
 
 import com.jcabi.github.Github;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.json.JsonObject;
 
 /**
@@ -72,11 +73,26 @@ public interface User {
         private final Github github;
 
         /**
+         * Authorization count.
+         */
+        private final AtomicInteger auth;
+
+        /**
+         * Ctor.
+         * @param github Github api
+         * @param auth Count for auth calls
+         */
+        public Fake(final Github github, final AtomicInteger auth) {
+            this.github = github;
+            this.auth = auth;
+        }
+
+        /**
          * Ctor.
          * @param github Github api
          */
-        Fake(final Github github) {
-            this.github = github;
+        public Fake(final Github github) {
+            this(github, new AtomicInteger(0));
         }
 
         @Override
@@ -85,8 +101,8 @@ public interface User {
         }
 
         @Override
-        public void authorize(final String token) throws IOException {
-            //does nothing
+        public void authorize(final String token) {
+            this.auth.incrementAndGet();
         }
 
         @Override
