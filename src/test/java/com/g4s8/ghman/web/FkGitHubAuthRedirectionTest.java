@@ -18,7 +18,8 @@ package com.g4s8.ghman.web;
 
 import com.g4s8.ghman.env.EnvironmentVariables;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import javax.net.ssl.HttpsURLConnection;
 import org.cactoos.list.ListOf;
 import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
@@ -35,7 +36,7 @@ import org.takes.rs.RsPrint;
  * @since 1.0
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-class FkGitHubAuthRedirectionTest {
+final class FkGitHubAuthRedirectionTest {
 
     @Test
     void redirects() throws Exception {
@@ -55,18 +56,19 @@ class FkGitHubAuthRedirectionTest {
             ).print(),
             new AllOf<>(
                 new ListOf<>(
-                    new StringContains("https://github.com/login/oauth/authorize"),
+                    new StringContains("Location: https://github.com/login/oauth/authorize"),
                     new StringContains(
                         new FormattedText(
                             "redirect_uri=%s",
                             URLEncoder.encode(
                                 new FormattedText("https://%s/auth", host).asString(),
-                                Charset.forName("UTF-8").name()
+                                StandardCharsets.UTF_8.name()
                             )
                         ).asString()
                     ),
                     new StringContains(new FormattedText("client_id=%s", client).asString()),
-                    new StringContains("scope=notifications")
+                    new StringContains("scope=notifications"),
+                    new StringContains(String.valueOf(HttpsURLConnection.HTTP_SEE_OTHER))
                 )
             )
         ).affirm();

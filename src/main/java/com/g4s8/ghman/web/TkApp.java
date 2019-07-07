@@ -41,8 +41,9 @@ final class TkApp extends TkWrap {
     /**
      * Ctor.
      * @param data Data source
+     * @param env Environment
      */
-    TkApp(final DataSource data) {
+    TkApp(final DataSource data, final EnvironmentVariables env) {
         super(
             new TkAuth(
                 new TkFork(
@@ -57,7 +58,7 @@ final class TkApp extends TkWrap {
                                 "code", ".+",
                                 new TkGitHubAuthorization(data)
                             ),
-                            new FkGitHubAuthRedirection(new EnvironmentVariables())
+                            new FkGitHubAuthRedirection(env)
                         )
                     )
                 ),
