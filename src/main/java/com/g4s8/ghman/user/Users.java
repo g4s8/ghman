@@ -62,18 +62,18 @@ public interface Users {
 
         /**
          * Ctor.
-         * @param users Users
-         */
-        public Fake(final Iterable<User> users) {
-            this.users = users;
-        }
-
-        /**
-         * Ctor.
          * @param github Github api
          */
         public Fake(final Github github) {
             this(new IterableOf<User>(new User.Fake(github)));
+        }
+
+        /**
+         * Ctor.
+         * @param users Users
+         */
+        public Fake(final Iterable<User> users) {
+            this.users = users;
         }
 
         @Override

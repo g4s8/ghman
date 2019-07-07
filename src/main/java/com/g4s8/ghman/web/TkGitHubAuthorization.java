@@ -53,18 +53,12 @@ final class TkGitHubAuthorization implements Take {
 
     /**
      * Authorization function.
+     * @todo #43:30min Introduce a meaningful abstraction for this. The
+     *  current implementation in the secondary constructor should reside in its
+     *  own class and there should be a Fake implementation for use in the tests.
+     *  Do not forget to correct unit test accordingly.
      */
     private final Func<org.takes.Request, String> auth;
-
-    /**
-     * Ctor.
-     * @param users Data source
-     * @param auth Authorization
-     */
-    TkGitHubAuthorization(final Users users, final Func<org.takes.Request, String> auth) {
-        this.users = users;
-        this.auth = auth;
-    }
 
     /**
      * Ctor.
@@ -90,6 +84,16 @@ final class TkGitHubAuthorization implements Take {
                 .readObject()
                 .getString("access_token")
         );
+    }
+
+    /**
+     * Ctor.
+     * @param users Data source
+     * @param auth Authorization
+     */
+    TkGitHubAuthorization(final Users users, final Func<org.takes.Request, String> auth) {
+        this.users = users;
+        this.auth = auth;
     }
 
     @Override

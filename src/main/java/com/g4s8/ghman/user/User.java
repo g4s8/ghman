@@ -80,19 +80,19 @@ public interface User {
         /**
          * Ctor.
          * @param github Github api
-         * @param auth Count for auth calls
          */
-        public Fake(final Github github, final AtomicInteger auth) {
-            this.github = github;
-            this.auth = auth;
+        public Fake(final Github github) {
+            this(github, new AtomicInteger(0));
         }
 
         /**
          * Ctor.
          * @param github Github api
+         * @param auth Count for auth calls
          */
-        public Fake(final Github github) {
-            this(github, new AtomicInteger(0));
+        public Fake(final Github github, final AtomicInteger auth) {
+            this.github = github;
+            this.auth = auth;
         }
 
         @Override

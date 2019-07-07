@@ -61,7 +61,7 @@ class TkGitHubAuthorizationTest {
                     new Users.Fake(new IterableOf<>(new User.Fake(new MkGithub()))),
                     req -> "abc"
                 ).act(new RqWithAuth(new Identity.Simple("urn:fake:5"), new RqFake()))
-            ).print(),
+            ).printBody(),
             new StringContains("Authorized successfully!")
         ).affirm();
     }
