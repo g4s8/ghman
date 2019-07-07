@@ -30,7 +30,7 @@ import java.net.HttpURLConnection;
 import javax.json.JsonObject;
 
 /**
- * Implementation of {@link Github} that to returns given in ctor request body.
+ * Implementation of {@link Github} that returns request body passed to ctor.
  * @since 1.0
  */
 @SuppressWarnings("PMD.TooManyMethods")

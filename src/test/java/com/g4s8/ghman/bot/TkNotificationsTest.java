@@ -52,12 +52,14 @@ class TkNotificationsTest {
                     new RequestGithub(
                         Json.createArrayBuilder()
                             .add(
-                                Json.createObjectBuilder().add(id, idone)
-                                .add(subject, Json.createObjectBuilder().add(title, subjone))
+                                Json.createObjectBuilder()
+                                    .add(id, idone)
+                                    .add(subject, Json.createObjectBuilder().add(title, subjone))
                             )
                             .add(
-                                Json.createObjectBuilder().add(id, idtwo)
-                                .add(subject, Json.createObjectBuilder().add(title, subjtwo))
+                                Json.createObjectBuilder()
+                                    .add(id, idtwo)
+                                    .add(subject, Json.createObjectBuilder().add(title, subjtwo))
                             )
                             .build().toString()
                     )
