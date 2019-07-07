@@ -27,13 +27,14 @@ import org.cactoos.text.FormattedText;
 import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.Assertion;
+import org.telegram.telegrambots.api.objects.Update;
 
 /**
  * Test for {@link FbUnauthorized}.
  * @since 1.0
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-class FbUnauthorizedTest {
+final class FbUnauthorizedTest {
 
     @Test
     void returnsLinkForAuth() throws Exception {
@@ -42,7 +43,7 @@ class FbUnauthorizedTest {
             "Returns link to login",
             new FbUnauthorized(
                 new EnvironmentVariables(new MapOf<>(new MapEntry<>("APP_HOST", host)))
-            ).handle(null, new GhAuthException(new User.Fake(new MkGithub()), ""))
+            ).handle(new Update(), new GhAuthException(new User.Fake(new MkGithub()), ""))
                 .orElseThrow(
                     () -> new IllegalStateException("Response is not supposed to be empty!")
                 ).xml(),
@@ -54,10 +55,10 @@ class FbUnauthorizedTest {
     }
 
     @Test
-    void returnsEmptyResponse() {
+    void ignoresNonGhAuthException() {
         new Assertion<>(
-            "Returns empty response",
-            new FbUnauthorized(new EnvironmentVariables()).handle(null, new Throwable())
+            "Ignores non GhAuthException exceptions",
+            new FbUnauthorized(new EnvironmentVariables()).handle(new Update(), new Throwable())
                 .isPresent(),
             new IsEqual<>(false)
         ).affirm();
