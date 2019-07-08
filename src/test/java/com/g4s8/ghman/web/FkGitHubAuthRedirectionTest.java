@@ -17,14 +17,10 @@
 package com.g4s8.ghman.web;
 
 import com.g4s8.ghman.env.EnvironmentVariables;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import javax.net.ssl.HttpsURLConnection;
-import org.cactoos.list.ListOf;
+import org.apache.http.client.utils.URIBuilder;
 import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
 import org.cactoos.text.FormattedText;
-import org.hamcrest.core.AllOf;
 import org.hamcrest.core.StringContains;
 import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.Assertion;
@@ -34,9 +30,6 @@ import org.takes.rs.RsPrint;
 /**
  * Test for {@link FkGitHubAuthRedirection}.
  * @since 1.0
- * @todo #41:30min Improve this test: here we are just testing that some string
- *  contains some other strings, but we have to to check that the http code IS a
- *  redirection and that there IS a Location header with the correct URI, and so on.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 final class FkGitHubAuthRedirectionTest {
@@ -57,22 +50,14 @@ final class FkGitHubAuthRedirectionTest {
                     )
                 ).route(new RqFake()).get()
             ).print(),
-            new AllOf<>(
-                new ListOf<>(
-                    new StringContains("Location: https://github.com/login/oauth/authorize"),
-                    new StringContains(
-                        new FormattedText(
-                            "redirect_uri=%s",
-                            URLEncoder.encode(
-                                new FormattedText("https://%s/auth", host).asString(),
-                                StandardCharsets.UTF_8.name()
-                            )
-                        ).asString()
-                    ),
-                    new StringContains(new FormattedText("client_id=%s", client).asString()),
-                    new StringContains("scope=notifications"),
-                    new StringContains(String.valueOf(HttpsURLConnection.HTTP_SEE_OTHER))
-                )
+            new StringContains(
+                new URIBuilder("https://github.com/login/oauth/authorize")
+                    .addParameter(
+                        "redirect_uri", new FormattedText("https://%s/auth", host).asString()
+                    )
+                    .addParameter("client_id", client)
+                    .addParameter("scope", "notification")
+                    .toString()
             )
         ).affirm();
     }

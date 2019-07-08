@@ -33,6 +33,9 @@ import org.takes.rs.RsRedirect;
  * @since 1.0
  * @todo #4:30min Replace the call to static method String.format
  *  with the use of cactoos' text.Formatted class in all files.
+ * @todo #41:30min Extract into a separate object the behaviour of creating the redirect URI
+ *  and test that exact complete string of the redirect uri is correct. After that unit test
+ *  for FkGitHubAuthRedirection can be replaced with integration one.
  */
 public final class FkGitHubAuthRedirection extends FkWrap {
 
