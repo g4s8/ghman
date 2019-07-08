@@ -34,6 +34,9 @@ import org.takes.rs.RsPrint;
 /**
  * Test for {@link FkGitHubAuthRedirection}.
  * @since 1.0
+ * @todo #41:30min Improve this test: here we are just testing that some string
+ *  contains some other strings, but we have to to check that the http code IS a
+ *  redirection and that there IS a Location header with the correct URI, and so on.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 final class FkGitHubAuthRedirectionTest {
