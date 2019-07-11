@@ -21,6 +21,8 @@ import com.jcabi.http.response.JsonResponse;
 import java.io.IOException;
 import javax.json.JsonValue;
 import org.cactoos.iterable.Mapped;
+import org.cactoos.text.FormattedText;
+import org.cactoos.text.TextOf;
 
 /**
  * Github user.
@@ -67,7 +69,7 @@ public final class GhUser {
         return new GhThread(
             this.ghb.entry()
                 .uri()
-                .path(String.format("/notifications/threads/%s", tid))
+                .path(new FormattedText(new TextOf("/notifications/threads/%s"), tid).toString())
                 .back()
                 .fetch().as(JsonResponse.class)
                 .json().readObject()

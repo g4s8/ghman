@@ -21,6 +21,8 @@ import com.jcabi.github.Repos;
 import com.jcabi.github.mock.MkGithub;
 import com.jcabi.matchers.XhtmlMatchers;
 import java.io.IOException;
+import org.cactoos.text.FormattedText;
+import org.cactoos.text.TextOf;
 import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.Assertion;
 import org.llorllale.cactoos.matchers.Throws;
@@ -32,6 +34,7 @@ import org.telegram.telegrambots.api.objects.Update;
 /**
  * Test for {@link TkCloseIssue}.
  * @since 1.0
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 final class TkCloseIssueTest {
 
@@ -46,9 +49,9 @@ final class TkCloseIssueTest {
             .issues().create("illuminate traffic", "");
         Mockito.when(clbq.getMessage()).thenReturn(Mockito.mock(Message.class));
         Mockito.when(clbq.getData()).thenReturn(
-            String.format(
+            new FormattedText(
                 "click:notification.close?repo=%s/%s&issue=%d", user, repo, 1
-            )
+            ).toString()
         );
         Mockito.when(upd.getCallbackQuery()).thenReturn(clbq);
         new Assertion<>(
@@ -71,7 +74,7 @@ final class TkCloseIssueTest {
             "Should throw IllegalArgumentException",
             () -> new TkCloseIssue(new Users.Fake(new MkGithub())).act(upd),
             new Throws<>(
-                String.format("Illegal request: %s", data),
+                new FormattedText(new TextOf("Illegal request: %s"), data).toString(),
                 IllegalArgumentException.class
             )
         ).affirm();
