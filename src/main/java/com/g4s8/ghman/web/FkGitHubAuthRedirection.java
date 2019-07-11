@@ -19,6 +19,8 @@ package com.g4s8.ghman.web;
 import java.io.IOException;
 import org.apache.http.client.utils.URIBuilder;
 import org.cactoos.scalar.IoChecked;
+import org.cactoos.text.FormattedText;
+import org.cactoos.text.TextOf;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -30,8 +32,6 @@ import org.takes.rs.RsRedirect;
 /**
  * Github Authorization Redirection.
  * @since 1.0
- * @todo #4:30min Replace the call to static method String.format
- *  with the use of cactoos' text.Formatted class in all files.
  * @todo #4:30min Implement unit tests for FkGitHubAuthRedirection. Refer
  *  to takes framework Unit testing guide @ https://github.com/yegor256/takes#unit-testing
  */
@@ -48,7 +48,9 @@ public final class FkGitHubAuthRedirection extends FkWrap {
                         () -> new URIBuilder("https://github.com/login/oauth/authorize")
                             .addParameter(
                                 "redirect_uri",
-                                String.format("https://%s/auth", System.getenv("APP_HOST"))
+                                new FormattedText(
+                                    new TextOf("https://%s/auth"), System.getenv("APP_HOST")
+                                ).toString()
                             )
                             .addParameter("client_id", System.getenv("GH_CLIENT"))
                             .addParameter("scope", "notifications")

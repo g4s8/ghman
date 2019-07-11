@@ -17,6 +17,8 @@
 package com.g4s8.ghman.web;
 
 import java.io.IOException;
+import org.cactoos.text.FormattedText;
+import org.cactoos.text.TextOf;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.facets.auth.Identity;
@@ -56,7 +58,9 @@ final class PsUserById implements Pass {
     public Opt<Identity> enter(final Request req) throws IOException {
         return new Opt.Single<>(
             new Identity.Simple(
-                String.format("urn:uid:%s", new RqHref.Smart(req).single(this.flag))
+                new FormattedText(
+                    new TextOf("urn:uid:%s"), new RqHref.Smart(req).single(this.flag)
+                ).toString()
             )
         );
     }

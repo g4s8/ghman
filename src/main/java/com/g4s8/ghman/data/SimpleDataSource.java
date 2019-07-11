@@ -23,6 +23,8 @@ import javax.sql.DataSource;
 import org.cactoos.Scalar;
 import org.cactoos.scalar.IoChecked;
 import org.cactoos.scalar.Solid;
+import org.cactoos.text.FormattedText;
+import org.cactoos.text.TextOf;
 
 /**
  * Simple data source.
@@ -64,10 +66,10 @@ public final class SimpleDataSource implements Scalar<DataSource> {
         final org.postgresql.jdbc2.optional.SimpleDataSource source =
             new org.postgresql.jdbc2.optional.SimpleDataSource();
         source.setUrl(
-            String.format(
-                "jdbc:postgresql://%s:%s/%s",
+            new FormattedText(
+                new TextOf("jdbc:postgresql://%s:%s/%s"),
                 env.get("DB_HOST"), env.get("DB_PORT"), env.get("DB_NAME")
-            )
+            ).toString()
         );
         source.setUser(env.get("DB_USER"));
         if (env.containsKey("DB_PASSWORD")) {
@@ -92,10 +94,10 @@ public final class SimpleDataSource implements Scalar<DataSource> {
         for (final String var : req) {
             if (!env.containsKey(var)) {
                 throw new IllegalArgumentException(
-                    String.format(
-                        "Environment variable '%s' is required",
+                    new FormattedText(
+                        new TextOf("Environment variable '%s' is required"),
                         var
-                    )
+                    ).toString()
                 );
             }
         }
