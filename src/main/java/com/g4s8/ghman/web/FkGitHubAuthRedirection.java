@@ -16,6 +16,7 @@
  */
 package com.g4s8.ghman.web;
 
+import com.g4s8.ghman.env.EnvironmentVariables;
 import java.io.IOException;
 import org.apache.http.client.utils.URIBuilder;
 import org.cactoos.scalar.IoChecked;
@@ -32,15 +33,17 @@ import org.takes.rs.RsRedirect;
 /**
  * Github Authorization Redirection.
  * @since 1.0
- * @todo #4:30min Implement unit tests for FkGitHubAuthRedirection. Refer
- *  to takes framework Unit testing guide @ https://github.com/yegor256/takes#unit-testing
+ * @todo #41:30min Extract into a separate object the behaviour of creating the redirect URI
+ *  and test that exact complete string of the redirect uri is correct. After that unit test
+ *  for FkGitHubAuthRedirection can be replaced with integration one.
  */
 public final class FkGitHubAuthRedirection extends FkWrap {
 
     /**
      * Ctor.
+     * @param env Environment parameters
      */
-    public FkGitHubAuthRedirection() {
+    public FkGitHubAuthRedirection(final EnvironmentVariables env) {
         super(
             new Fork() {
                 private Take take = req -> new RsRedirect(
@@ -49,10 +52,10 @@ public final class FkGitHubAuthRedirection extends FkWrap {
                             .addParameter(
                                 "redirect_uri",
                                 new FormattedText(
-                                    new TextOf("https://%s/auth"), System.getenv("APP_HOST")
+                                    new TextOf("https://%s/auth"), env.applicationHost()
                                 ).toString()
                             )
-                            .addParameter("client_id", System.getenv("GH_CLIENT"))
+                            .addParameter("client_id", env.githubClientId())
                             .addParameter("scope", "notifications")
                             .build()
                     ).value().toASCIIString()

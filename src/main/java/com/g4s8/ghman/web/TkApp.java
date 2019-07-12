@@ -16,6 +16,7 @@
  */
 package com.g4s8.ghman.web;
 
+import com.g4s8.ghman.env.EnvironmentVariables;
 import java.util.regex.Pattern;
 import javax.sql.DataSource;
 import org.takes.facets.auth.PsByFlag;
@@ -40,8 +41,9 @@ final class TkApp extends TkWrap {
     /**
      * Ctor.
      * @param data Data source
+     * @param env Environment
      */
-    TkApp(final DataSource data) {
+    TkApp(final DataSource data, final EnvironmentVariables env) {
         super(
             new TkAuth(
                 new TkFork(
@@ -56,7 +58,7 @@ final class TkApp extends TkWrap {
                                 "code", ".+",
                                 new TkGitHubAuthorization(data)
                             ),
-                            new FkGitHubAuthRedirection()
+                            new FkGitHubAuthRedirection(env)
                         )
                     )
                 ),
