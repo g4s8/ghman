@@ -29,8 +29,6 @@ import org.takes.rq.RqHref;
 /**
  * User by identity extraction.
  * @since 1.0
- * @todo #4:30min Implement unit tests for PsUserById.
- *  Refer to takes framework Unit testing guide @ https://github.com/yegor256/takes#unit-testing
  */
 final class PsUserById implements Pass {
 
