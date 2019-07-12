@@ -61,7 +61,7 @@ final class TkApp extends TkWrap {
                                     new PgUsers(data), env
                                 )
                             ),
-                            new FkGitHubAuthRedirection()
+                            new FkGitHubAuthRedirection(env)
                         )
                     )
                 ),

@@ -33,10 +33,13 @@ import org.cactoos.Scalar;
 import org.cactoos.scalar.IoChecked;
 import org.cactoos.scalar.SolidScalar;
 import org.cactoos.scalar.Unchecked;
+import org.cactoos.text.FormattedText;
+import org.cactoos.text.TextOf;
 
 /**
  * Issue for thread.
  * @since 1.0
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public final class ThreadIssue implements Issue {
@@ -58,10 +61,10 @@ public final class ThreadIssue implements Issue {
                 final String type = subj.getString("type");
                 if (!type.equals("Issue")) {
                     throw new UnsupportedThreadException(
-                        String.format(
-                            "Thread subject type is `%s` - not supported yet",
+                        new FormattedText(
+                            new TextOf("Thread subject type is `%s` - not supported yet"),
                             type
-                        )
+                        ).toString()
                     );
                 }
                 // @checkstyle LineLengthCheck (1 line)

@@ -16,7 +16,7 @@
  */
 
 /**
- * Web tests.
+ * Web app objects tests.
  *
  * @since 1.0
  */
