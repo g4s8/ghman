@@ -44,6 +44,9 @@ public interface User {
      * Telegram data.
      * @return Telegram data
      * @throws IOException If fails
+     * @todo #53:30min Refactor this method to return instance of {@link TmUser}. First
+     *  create implementation to get data from db (see JsonUserDetails) and then use
+     *  is in PgUser accordingly. Do not forget about test.
      */
     JsonObject telegram() throws IOException;
 

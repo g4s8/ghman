@@ -16,6 +16,7 @@
  */
 package com.g4s8.ghman.data;
 
+import com.g4s8.ghman.user.TmUser;
 import com.g4s8.ghman.user.User;
 import com.g4s8.ghman.user.Users;
 import com.jcabi.jdbc.JdbcSession;
@@ -37,6 +38,7 @@ import org.telegram.telegrambots.api.objects.Chat;
  * @since 1.0
  * @todo #7:30min Create integration test: check all methods of this class and
  *  do not forget about all possible exceptions.
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class PgUsers implements Users {
 
@@ -55,7 +57,7 @@ public final class PgUsers implements Users {
 
     @Override
     public User user(final Chat chat) throws IOException {
-        final JsonObject details = new JsonUserDetails(chat).value();
+        final JsonObject details = new JsonUserDetails(new TmUser.FromChat(chat)).value();
         try {
             return new PgUser(
                 this.data,
@@ -103,40 +105,33 @@ public final class PgUsers implements Users {
      * User details as json from telegram chat.
      *
      * @since 1.0
-     * @todo #18:30min This class represents details about a user stored in
-     *  the database. Callers of PgUser.telegram relies on the datastructure
-     *  defined here and must know how it is structured to exploit the
-     *  information. Instead, extract interface from it and use it
-     *  everywhere it is needed instead of exposing this data. One
-     *  implementation is maybe based on Chat and another would be based on
-     *  a pg request for example. Add unit tests for both when it's done.
      */
     private static final class JsonUserDetails implements Scalar<JsonObject> {
 
         /**
          * Telegram chat with a user.
          */
-        private final Chat chat;
+        private final TmUser chat;
 
         /**
          * Ctor.
          * @param chat Telegram chat with a user
          */
-        JsonUserDetails(final Chat chat) {
+        JsonUserDetails(final TmUser chat) {
             this.chat = chat;
         }
 
         @Override
         public JsonObject value() {
             final JsonObjectBuilder details = Json.createObjectBuilder()
-                .add("firstName", this.chat.getFirstName());
-            if (this.chat.getLastName() != null) {
-                details.add("lastName", this.chat.getLastName());
+                .add("firstName", this.chat.firstName());
+            if (this.chat.lastName().has()) {
+                details.add("lastName", this.chat.lastName().get());
             }
-            if (this.chat.getUserName() != null) {
-                details.add("userName", this.chat.getUserName());
+            if (this.chat.userName().has()) {
+                details.add("userName", this.chat.userName().get());
             }
-            details.add("uid", this.chat.getId());
+            details.add("uid", this.chat.tid());
             return details.build();
         }
     }
