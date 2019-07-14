@@ -16,12 +16,7 @@
  */
 package com.g4s8.ghman.web;
 
-import com.g4s8.ghman.data.PgUsers;
-import com.g4s8.ghman.user.PgThreads;
-import com.g4s8.ghman.user.Thread;
-import com.g4s8.ghman.user.User;
 import java.io.IOException;
-import javax.sql.DataSource;
 import org.takes.Request;
 import org.takes.Response;
 import org.takes.Take;
@@ -29,38 +24,44 @@ import org.takes.rs.RsEmpty;
 
 /**
  * Synchronization trigger, called by Heroku scheduler every 10 minutes.
- * <p>
- *     This take synchronizes all unread threads for active users and
- *     marks these threads as unread with updating last_read value.
- * </p>
  * @since 1.0
+ * @todo #26:30 In case `Sync.sync` throws an exception, this class should log
+ *  it instead of failing the whole synchronization process. Some thought must
+ *  be taken to apply the same principle to instances of `Sync` in case they do
+ *  multiple tasks.
  */
 public final class TkSync implements Take {
 
     /**
-     * Data source.
+     * Syncs.
      */
-    private final DataSource data;
+    private final Iterable<Sync> syncs;
 
     /**
      * Ctor.
-     * @param data Data source
+     * @param syncs Syncs
      */
-    public TkSync(final DataSource data) {
-        this.data = data;
+    public TkSync(final Iterable<Sync> syncs) {
+        this.syncs = syncs;
     }
 
     @Override
     public Response act(final Request req) throws IOException {
-        final PgThreads tds = new PgThreads(this.data);
-        for (final User user : new PgUsers(this.data).active()) {
-            for (final Thread thread : user.github().notifications()) {
-                final Thread copy = tds.thread(user.uid(), thread.tid());
-                if (copy.lastRead().isBefore(thread.lastRead())) {
-                    tds.update(user.uid(), thread);
-                }
-            }
+        for (final Sync sync : this.syncs) {
+            sync.sync();
         }
         return new RsEmpty();
+    }
+
+    /**
+     * Sync.
+     * @since 1.0
+     */
+    public interface Sync {
+        /**
+         * Synchronize some state.
+         * @throws IOException If an error happens
+         */
+        void sync() throws IOException;
     }
 }

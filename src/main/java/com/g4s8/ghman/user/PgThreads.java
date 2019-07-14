@@ -37,7 +37,7 @@ import javax.sql.DataSource;
  * @since 1.0
  * @checkstyle MagicNumberCheck (500 lines)
  */
-public final class PgThreads {
+public final class PgThreads implements Threads {
 
     /**
      * Data source.
@@ -52,22 +52,12 @@ public final class PgThreads {
         this.data = data;
     }
 
-    /**
-     * Find thread for user by id.
-     * @param uid User id
-     * @param tid Thread id
-     * @return Thread
-     */
+    @Override
     public Thread thread(final long uid, final String tid) {
         return new PgThreads.PgThread(this.data, uid, tid);
     }
 
-    /**
-     * Update thread.
-     * @param uid User id
-     * @param thread Thread
-     * @throws IOException If fails
-     */
+    @Override
     @SuppressWarnings("PMD.ExceptionAsFlowControl")
     public void update(final long uid, final Thread thread) throws IOException {
         try {
@@ -105,11 +95,7 @@ public final class PgThreads {
         }
     }
 
-    /**
-     * Unread threads.
-     * @return Unread threads map
-     * @throws IOException If fails
-     */
+    @Override
     public Map<Long, List<Thread>> unread() throws IOException {
         final JdbcSession session = new JdbcSession(this.data)
             .autocommit(false);
