@@ -94,7 +94,11 @@ public final class BotApp implements Runnable {
                         new TkFork(
                             new FkCommand(
                                 "/notifications",
-                                    new TkNotifications(this.users)
+                                new TkNotifications(this.users)
+                            ),
+                            new FkCommand(
+                                "/reply",
+                                new TkReply()
                             ),
                             new FkCallbackQuery(
                                 Pattern.compile("click:notification#(?<tid>[A-Za-z0-9]+)"),
