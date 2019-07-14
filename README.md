@@ -49,4 +49,15 @@ some ticket. Then you have:
  5. Wait for architect to merge (architect may ask additional changes)
  6. After merge to `master` ask issue author to close the ticket
  
+Git guidelines:
+ - start all commit message with tiket number, e.g.: `#1 - some message`
+ - try to describe shortly your changes in commit message, long description
+ should be provided in PR body
+ - name your barnches same as ticket number, e.g. `1` branch for #1 ticket
+ - use `merge`, not `rebase` when merging changes from `master` to local branch
+ - one commit per change, don't rebase all commits into single one for PR
+ - avoid `push --force` where possible, it can be used in rare cases, e.g. if
+ you pushed binary file by mistake, then you can remove it with `push --force`
+ or if you mistyped ticket number or message, you can fix it with `push --force`
+ 
 To build and run tests locally you need `>=jdk-8` and `>=maven-3.*`
