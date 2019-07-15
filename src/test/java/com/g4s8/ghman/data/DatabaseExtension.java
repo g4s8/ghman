@@ -16,17 +16,19 @@
  */
 package com.g4s8.ghman.data;
 
+import com.jcabi.jdbc.JdbcSession;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import javax.sql.DataSource;
 import org.cactoos.list.ListOf;
-import org.flywaydb.core.Flyway;
+import org.cactoos.text.Joined;
+import org.cactoos.text.TextOf;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.postgresql.ds.PGSimpleDataSource;
-import ru.yandex.qatools.embed.postgresql.EmbeddedPostgres;
-import ru.yandex.qatools.embed.postgresql.distribution.Version;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 /**
  * JUnit 5 extension to set up database. This extension is meant to be used in
@@ -41,23 +43,41 @@ public final class DatabaseExtension implements BeforeEachCallback, AfterEachCal
     private final PGSimpleDataSource src = new PGSimpleDataSource();
 
     /**
-     * Embedded postgres.
+     * Testcontainers postgres.
      */
-    private final EmbeddedPostgres postgres = new EmbeddedPostgres(Version.V11_1);
+    private final PostgreSQLContainer postgres = new PostgreSQLContainer<>()
+        .withUsername("test_user")
+        .withPassword("test_pass");
 
     @Override
     public void beforeEach(final ExtensionContext context) throws Exception {
-        this.src.setUrl(this.postgres.start());
-        Flyway.configure().dataSource(this.src).load().migrate();
+        this.postgres.start();
+        this.src.setUrl(
+            new Joined(
+                "",
+                this.postgres.getJdbcUrl(),
+                "?user=",
+                this.postgres.getUsername(),
+                "&password=",
+                this.postgres.getPassword()
+            ).asString()
+        );
+        new JdbcSession(this.src).sql(
+            new TextOf(
+                new File("target/classes/db/migration/V1__users.sql")
+            ).asString()
+        ).execute();
     }
 
     @Override
     public void afterEach(final ExtensionContext context) throws Exception {
-        try (Connection con = this.src.getConnection()) {
+        try (Connection con = this.src.getConnection(
+            this.postgres.getUsername(),
+            this.postgres.getPassword()
+        )) {
             for (final String sql : new ListOf<>(
                 "DROP SCHEMA public CASCADE",
                 "CREATE SCHEMA public",
-                "GRANT ALL ON SCHEMA public TO postgres",
                 "GRANT ALL ON SCHEMA public TO public"
             )) {
                 try (PreparedStatement stm = con.prepareStatement(sql)) {

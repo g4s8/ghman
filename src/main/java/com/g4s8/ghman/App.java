@@ -17,7 +17,6 @@
 package com.g4s8.ghman;
 
 import com.g4s8.ghman.bot.BotApp;
-import com.g4s8.ghman.data.FlywayDataSource;
 import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.data.SimpleDataSource;
 import com.g4s8.ghman.web.WebApp;
@@ -51,11 +50,7 @@ public final class App {
     @SuppressWarnings("PMD.CyclomaticComplexity")
     public static void main(final String[] args) throws Exception {
         final Options opts = new Options(new IterableOf<>(args));
-        final DataSource data = new FlywayDataSource(
-            new SimpleDataSource(
-                System.getenv()
-            )
-        ).value();
+        final DataSource data = new SimpleDataSource(System.getenv()).value();
         final Thread web = new Thread(new WebApp(opts, data));
         web.checkAccess();
         web.setDaemon(false);

@@ -2,6 +2,9 @@
 version: 2
 jobs:
   build:
+    # @todo #52:30min Change CircleCI configuration to use machine instead of Docker,
+    #  in order to enable execution of Testcontainers.
+    #  See https://www.testcontainers.org/supported_docker_environment/continuous_integration/circle_ci/
     docker:
       - image: g4s8/rultor:alpine
     steps:
