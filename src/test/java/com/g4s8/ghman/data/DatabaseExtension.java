@@ -16,14 +16,12 @@
  */
 package com.g4s8.ghman.data;
 
-import com.jcabi.jdbc.JdbcSession;
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import javax.sql.DataSource;
 import org.cactoos.list.ListOf;
 import org.cactoos.text.Joined;
-import org.cactoos.text.TextOf;
+import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -62,11 +60,7 @@ public final class DatabaseExtension implements BeforeEachCallback, AfterEachCal
                 this.postgres.getPassword()
             ).asString()
         );
-        new JdbcSession(this.src).sql(
-            new TextOf(
-                new File("target/classes/db/migration/V1__users.sql")
-            ).asString()
-        ).execute();
+        Flyway.configure().dataSource(this.src).load().migrate();
     }
 
     @Override
