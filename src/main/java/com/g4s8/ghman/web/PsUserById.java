@@ -54,13 +54,20 @@ final class PsUserById implements Pass {
 
     @Override
     public Opt<Identity> enter(final Request req) throws IOException {
-        return new Opt.Single<>(
-            new Identity.Simple(
-                new FormattedText(
-                    new TextOf("urn:uid:%s"), new RqHref.Smart(req).single(this.flag)
-                ).toString()
-            )
-        );
+        final Opt<Identity> res;
+        final String uid = new RqHref.Smart(req).single(this.flag, "");
+        if (uid.isEmpty()) {
+            res = new Opt.Empty<>();
+        } else {
+            res = new Opt.Single<>(
+                new Identity.Simple(
+                    new FormattedText(
+                        new TextOf("urn:uid:%s"), new RqHref.Smart(req).single(this.flag)
+                    ).toString()
+                )
+            );
+        }
+        return res;
     }
 
     @Override

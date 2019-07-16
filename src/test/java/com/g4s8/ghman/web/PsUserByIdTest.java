@@ -17,7 +17,6 @@
 package com.g4s8.ghman.web;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import javax.ws.rs.HttpMethod;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
@@ -35,10 +34,10 @@ import org.takes.rs.RsWithStatus;
  * @since 1.0
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
-class PsUserByIdTest {
+final class PsUserByIdTest {
 
     @Test
-    void returnsIdentityOnEnter() throws IOException, URISyntaxException {
+    void returnsIdentityOnEnter() throws Exception {
         final String uid = "123";
         final String param = "uid";
         new Assertion<>(
@@ -50,6 +49,15 @@ class PsUserByIdTest {
                 )
             ).get().urn(),
             new IsEqual<>(new FormattedText("urn:uid:%s", uid).asString())
+        ).affirm();
+    }
+
+    @Test
+    void returnsEmptyOptIfParamIsMissing() throws IOException {
+        new Assertion<>(
+            "Returns empty Opt",
+            new PsUserById().enter(new RqFake()).has(),
+            new IsEqual<>(false)
         ).affirm();
     }
 
