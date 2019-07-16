@@ -5,7 +5,7 @@ env:
   MAVEN_OPTS: "-Xmx1g"
 merge:
   script:
-    - "mvn install -B -Pqulice"
+    - "mvn install -B -Pqulice,itcase"
     - "pdd --source=$(pwd) --verbose --file=/dev/null"
   fast-forward: "no"
 architect:

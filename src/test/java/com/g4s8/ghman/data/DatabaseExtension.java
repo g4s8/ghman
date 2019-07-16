@@ -43,7 +43,7 @@ public final class DatabaseExtension implements BeforeEachCallback, AfterEachCal
     /**
      * Embedded postgres.
      */
-    private final EmbeddedPostgres postgres = new EmbeddedPostgres(Version.V11_1);
+    private final EmbeddedPostgres postgres = new EmbeddedPostgres(Version.V10_6);
 
     @Override
     public void beforeEach(final ExtensionContext context) throws Exception {
