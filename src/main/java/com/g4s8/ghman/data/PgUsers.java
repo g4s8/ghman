@@ -17,17 +17,15 @@
 package com.g4s8.ghman.data;
 
 import com.g4s8.ghman.user.User;
+import com.g4s8.ghman.user.UserDetails;
 import com.g4s8.ghman.user.Users;
 import com.jcabi.jdbc.JdbcSession;
 import com.jcabi.jdbc.ListOutcome;
 import com.jcabi.jdbc.SingleOutcome;
 import java.io.IOException;
 import java.sql.SQLException;
-import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.sql.DataSource;
-import org.cactoos.Scalar;
 import org.cactoos.text.Joined;
 import org.telegram.telegrambots.api.objects.Chat;
 
@@ -55,7 +53,7 @@ public final class PgUsers implements Users {
 
     @Override
     public User user(final Chat chat) throws IOException {
-        final JsonObject details = new JsonUserDetails(chat).value();
+        final JsonObject details = new UserDetails.FromChat(chat).details();
         try {
             return new PgUser(
                 this.data,
@@ -96,48 +94,6 @@ public final class PgUsers implements Users {
             );
         } catch (final SQLException err) {
             throw new IOException("Failed to select active users", err);
-        }
-    }
-
-    /**
-     * User details as json from telegram chat.
-     *
-     * @since 1.0
-     * @todo #18:30min This class represents details about a user stored in
-     *  the database. Callers of PgUser.telegram relies on the datastructure
-     *  defined here and must know how it is structured to exploit the
-     *  information. Instead, extract interface from it and use it
-     *  everywhere it is needed instead of exposing this data. One
-     *  implementation is maybe based on Chat and another would be based on
-     *  a pg request for example. Add unit tests for both when it's done.
-     */
-    private static final class JsonUserDetails implements Scalar<JsonObject> {
-
-        /**
-         * Telegram chat with a user.
-         */
-        private final Chat chat;
-
-        /**
-         * Ctor.
-         * @param chat Telegram chat with a user
-         */
-        JsonUserDetails(final Chat chat) {
-            this.chat = chat;
-        }
-
-        @Override
-        public JsonObject value() {
-            final JsonObjectBuilder details = Json.createObjectBuilder()
-                .add("firstName", this.chat.getFirstName());
-            if (this.chat.getLastName() != null) {
-                details.add("lastName", this.chat.getLastName());
-            }
-            if (this.chat.getUserName() != null) {
-                details.add("userName", this.chat.getUserName());
-            }
-            details.add("uid", this.chat.getId());
-            return details.build();
         }
     }
 }
