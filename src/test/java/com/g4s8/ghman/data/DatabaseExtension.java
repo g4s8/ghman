@@ -20,7 +20,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import javax.sql.DataSource;
 import org.cactoos.list.ListOf;
-import org.cactoos.text.Joined;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -50,25 +49,15 @@ public final class DatabaseExtension implements BeforeEachCallback, AfterEachCal
     @Override
     public void beforeEach(final ExtensionContext context) throws Exception {
         this.postgres.start();
-        this.src.setUrl(
-            new Joined(
-                "",
-                this.postgres.getJdbcUrl(),
-                "?user=",
-                this.postgres.getUsername(),
-                "&password=",
-                this.postgres.getPassword()
-            ).asString()
-        );
+        this.src.setUser(this.postgres.getUsername());
+        this.src.setPassword(this.postgres.getPassword());
+        this.src.setUrl(this.postgres.getJdbcUrl());
         Flyway.configure().dataSource(this.src).load().migrate();
     }
 
     @Override
     public void afterEach(final ExtensionContext context) throws Exception {
-        try (Connection con = this.src.getConnection(
-            this.postgres.getUsername(),
-            this.postgres.getPassword()
-        )) {
+        try (Connection con = this.src.getConnection()) {
             for (final String sql : new ListOf<>(
                 "DROP SCHEMA public CASCADE",
                 "CREATE SCHEMA public",
