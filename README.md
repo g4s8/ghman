@@ -51,6 +51,7 @@ some ticket. Then you have:
  
 Git guidelines:
  - start all commit message with tiket number, e.g.: `#1 - some message`
+ (to avoid issues with comment char, check this answer: https://stackoverflow.com/a/14931661/1723695)
  - try to describe shortly your changes in commit message, long description
  should be provided in PR body
  - name your branches starting with ticket number, e.g. `1-some-bug` branch for #1 ticket
