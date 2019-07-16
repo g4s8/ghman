@@ -53,7 +53,7 @@ Git guidelines:
  - start all commit message with tiket number, e.g.: `#1 - some message`
  - try to describe shortly your changes in commit message, long description
  should be provided in PR body
- - name your barnches same as ticket number, e.g. `1` branch for #1 ticket
+ - name your branches starting with ticket number, e.g. `1-some-bug` branch for #1 ticket
  - use `merge`, not `rebase` when merging changes from `master` to local branch
  - one commit per change, don't rebase all commits into single one for PR
  - avoid `push --force` where possible, it can be used in rare cases, e.g. if

@@ -9,10 +9,16 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mvn dependency:go-offline
+      - run:
+          name: mvn-install
+          command: mvn install -Pqulice
       - save_cache:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mvn install -Pqulice
-      - run: pdd --source=$(pwd) --verbose --file=/dev/null
+      - run:
+          name: validate-commits
+          command: gitlint --subject-regex="#\d+ - .*"
+      - run:
+          name: validate-puzzles
+          command: pdd --source=$(pwd) --verbose --file=/dev/null
