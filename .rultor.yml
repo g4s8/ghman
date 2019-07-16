@@ -7,7 +7,7 @@ merge:
   script:
     - mvn install -B -Pqulice
     - pdd --source=$(pwd) --verbose --file=/dev/null
-    - gitlint --subject-regex='#\d+ - .*'
+    - gitlint
   fast-forward: "no"
 architect:
   - "g4s8"
