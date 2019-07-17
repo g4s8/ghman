@@ -16,6 +16,7 @@
  */
 package com.g4s8.ghman.bot;
 
+import com.g4s8.ghman.env.EnvironmentVariables;
 import com.g4s8.ghman.user.Users;
 import com.g4s8.teletakes.bot.BotSimple;
 import com.g4s8.teletakes.fk.FkCallbackQuery;
@@ -72,17 +73,25 @@ public final class BotApp implements Runnable {
     private final Users users;
 
     /**
+     * Environment.
+     */
+    private final EnvironmentVariables env;
+
+    /**
      * Ctor.
      * @param name Bot name
      * @param token Bot token
      * @param users Users
+     * @param env Environment
+     * @checkstyle ParameterNumberCheck (3 lines)
      */
-    public BotApp(final String name,
-        final String token, final Users users) {
+    public BotApp(final String name, final String token, final Users users,
+        final EnvironmentVariables env) {
         this.name = name;
         this.token = token;
         this.users = users;
         this.api = new TelegramBotsApi();
+        this.env = env;
     }
 
     @Override
@@ -106,7 +115,7 @@ public final class BotApp implements Runnable {
                                 new TkCloseIssue(this.users)
                             )
                         ),
-                        new FbUnauthorized()
+                        new FbUnauthorized(this.env)
                     )
                 ),
                 this.name, this.token
