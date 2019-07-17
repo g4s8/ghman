@@ -35,7 +35,6 @@ import javax.sql.DataSource;
  * Postgres threads.
  *
  * @since 1.0
- * @checkstyle MagicNumberCheck (500 lines)
  */
 public final class PgThreads implements Threads {
 
@@ -76,6 +75,7 @@ public final class PgThreads implements Threads {
                 )
                 .prepare(
                     stmt -> {
+                        // @checkstyle MagicNumberCheck (6 lines)
                         try {
                             stmt.setLong(1, uid);
                             stmt.setString(2, thread.tid());
@@ -107,6 +107,7 @@ public final class PgThreads implements Threads {
                     new ListOutcome<>(
                         rset -> new PgThread(
                             this.data,
+                            // @checkstyle MagicNumberCheck (2 lines)
                             rset.getLong(1),
                             rset.getString(2)
                         )
