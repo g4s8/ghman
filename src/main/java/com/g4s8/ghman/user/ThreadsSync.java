@@ -16,7 +16,7 @@
  */
 package com.g4s8.ghman.user;
 
-import com.g4s8.ghman.web.TkSync;
+import com.g4s8.ghman.web.Sync;
 import java.io.IOException;
 
 /**
@@ -27,7 +27,7 @@ import java.io.IOException;
  * </p>
  * @since 1.0
  */
-public final class ThreadsSync implements TkSync.Sync {
+public final class ThreadsSync implements Sync {
 
     /**
      * Threads.

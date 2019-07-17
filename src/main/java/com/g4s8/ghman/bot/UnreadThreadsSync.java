@@ -19,7 +19,7 @@ package com.g4s8.ghman.bot;
 import com.g4s8.ghman.user.Thread;
 import com.g4s8.ghman.user.Threads;
 import com.g4s8.ghman.user.Users;
-import com.g4s8.ghman.web.TkSync;
+import com.g4s8.ghman.web.Sync;
 import com.g4s8.teletakes.bot.BotSimple;
 import java.io.IOException;
 import java.util.List;
@@ -44,7 +44,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
  *  resolved. Please, while implementing try to avoid using mocked objects,
  *  use fake implementations instead.
  */
-public final class UnreadThreadsSync implements TkSync.Sync {
+public final class UnreadThreadsSync implements Sync {
 
     /**
      * Telegram bot.

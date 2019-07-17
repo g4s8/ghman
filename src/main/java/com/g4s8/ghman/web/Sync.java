@@ -17,39 +17,15 @@
 package com.g4s8.ghman.web;
 
 import java.io.IOException;
-import org.takes.Request;
-import org.takes.Response;
-import org.takes.Take;
-import org.takes.rs.RsEmpty;
 
 /**
- * Synchronization trigger, called by Heroku scheduler every 10 minutes.
+ * Sync.
  * @since 1.0
- * @todo #26:30 In case `Sync.sync` throws an exception, this class should log
- *  it instead of failing the whole synchronization process. Some thought must
- *  be taken to apply the same principle to instances of `Sync` in case they do
- *  multiple tasks.
  */
-public final class TkSync implements Take {
-
+public interface Sync {
     /**
-     * Syncs.
+     * Synchronize some state.
+     * @throws IOException If an error happens
      */
-    private final Iterable<Sync> syncs;
-
-    /**
-     * Ctor.
-     * @param syncs Syncs
-     */
-    public TkSync(final Iterable<Sync> syncs) {
-        this.syncs = syncs;
-    }
-
-    @Override
-    public Response act(final Request req) throws IOException {
-        for (final Sync sync : this.syncs) {
-            sync.sync();
-        }
-        return new RsEmpty();
-    }
+    void sync() throws IOException;
 }
