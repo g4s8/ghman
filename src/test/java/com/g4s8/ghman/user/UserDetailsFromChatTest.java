@@ -23,22 +23,22 @@ import org.llorllale.cactoos.matchers.Assertion;
 import org.telegram.telegrambots.api.objects.Chat;
 
 /**
- * Test fro {@link UserDetails.FromChat}.
+ * Test for {@link UserDetails.FromChat}.
  * @since 1.0
  * @checkstyle JavadocVariableCheck (500 lines)
  * @checkstyle JavadocTypeCheck (500 lines)
  * @checkstyle ParameterNumberCheck (500 lines)
  */
-class UserDetailsFromChatTest {
+final class UserDetailsFromChatTest {
 
     @Test
     void buildJsonFromChat() {
-        final String fname = "Jemes";
+        final String fname = "James";
         final String lname = "Kirk";
         final String uname = "Jim";
         final long uid = 1024;
         new Assertion<>(
-            "Returnw json with user details",
+            "Return json with user details",
             new UserDetails.FromChat(new Fake(fname, lname, uname, uid)).details(),
             new IsEqual<>(
                 Json.createObjectBuilder()
