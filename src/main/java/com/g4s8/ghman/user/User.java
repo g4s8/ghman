@@ -75,7 +75,7 @@ public interface User {
          * Ctor.
          * @param github Github api
          */
-        Fake(final Github github) {
+        public Fake(final Github github) {
             this.github = github;
         }
 
