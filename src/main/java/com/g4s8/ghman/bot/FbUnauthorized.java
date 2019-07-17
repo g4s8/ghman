@@ -16,6 +16,7 @@
  */
 package com.g4s8.ghman.bot;
 
+import com.g4s8.ghman.env.EnvironmentVariables;
 import com.g4s8.ghman.user.GhAuthException;
 import com.g4s8.teletakes.fb.TmFallback;
 import com.g4s8.teletakes.rs.RsText;
@@ -28,10 +29,21 @@ import org.telegram.telegrambots.api.objects.Update;
  * Telegram bot Unauthorized.
  *
  * @since 1.0
- * @todo #2:30min Implement Unit tests for FbUnauthorized class
- *  use JUNIT and cactoos-matchers wrapper.
  */
 public final class FbUnauthorized implements TmFallback {
+
+    /**
+     * Environment.
+     */
+    private final EnvironmentVariables env;
+
+    /**
+     * Ctor.
+     * @param env Environment
+     */
+    public FbUnauthorized(final EnvironmentVariables env) {
+        this.env = env;
+    }
 
     @Override
     public Optional<TmResponse> handle(final Update update, final Throwable throwable) {
@@ -40,8 +52,8 @@ public final class FbUnauthorized implements TmFallback {
             rsp = Optional.of(
                 new RsText(
                     new FormattedText(
-                        "You need to [login with Github](http://%s/auth?ps=%d",
-                        System.getenv("APP_HOST"),
+                        "You need to [login with Github](http://%s/auth?ps=%d)",
+                        this.env.applicationHost(),
                         GhAuthException.class.cast(throwable).user().uid()
                     )
                 )
