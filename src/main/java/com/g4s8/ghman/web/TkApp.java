@@ -16,9 +16,13 @@
  */
 package com.g4s8.ghman.web;
 
+import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.env.EnvironmentVariables;
+import com.g4s8.ghman.user.PgThreads;
+import com.g4s8.ghman.user.ThreadsSync;
 import java.util.regex.Pattern;
 import javax.sql.DataSource;
+import org.cactoos.list.ListOf;
 import org.takes.facets.auth.PsByFlag;
 import org.takes.facets.auth.PsChain;
 import org.takes.facets.auth.PsCookie;
@@ -49,7 +53,14 @@ final class TkApp extends TkWrap {
                 new TkFork(
                     new FkRegex(
                         "/ping",
-                        new TkSync(data)
+                        new TkSync(
+                            new ListOf<>(
+                                new ThreadsSync(
+                                    new PgThreads(data),
+                                    new PgUsers(data)
+                                )
+                            )
+                        )
                     ),
                     new FkRegex(
                         "/auth",

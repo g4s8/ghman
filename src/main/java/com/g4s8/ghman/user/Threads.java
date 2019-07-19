@@ -14,42 +14,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.g4s8.ghman.web;
+package com.g4s8.ghman.user;
 
 import java.io.IOException;
-import org.takes.Request;
-import org.takes.Response;
-import org.takes.Take;
-import org.takes.rs.RsEmpty;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Synchronization trigger, called by Heroku scheduler every 10 minutes.
+ * Github notifications thread.
+ *
  * @since 1.0
- * @todo #26:30 In case `Sync.sync` throws an exception, this class should log
- *  it instead of failing the whole synchronization process. Some thought must
- *  be taken to apply the same principle to instances of `Sync` in case they do
- *  multiple tasks.
  */
-public final class TkSync implements Take {
+public interface Threads {
 
     /**
-     * Syncs.
+     * Find thread for user by id.
+     * @param uid User id
+     * @param tid Thread id
+     * @return Thread
      */
-    private final Iterable<Sync> syncs;
+    Thread thread(long uid, String tid);
 
     /**
-     * Ctor.
-     * @param syncs Syncs
+     * Update thread.
+     * @param uid User id
+     * @param thread Thread
+     * @throws IOException If fails
      */
-    public TkSync(final Iterable<Sync> syncs) {
-        this.syncs = syncs;
-    }
+    void update(long uid, Thread thread) throws IOException;
 
-    @Override
-    public Response act(final Request req) throws IOException {
-        for (final Sync sync : this.syncs) {
-            sync.sync();
-        }
-        return new RsEmpty();
-    }
+    /**
+     * Unread threads.
+     * @return Unread threads map
+     * @throws IOException If fails
+     */
+    Map<Long, List<Thread>> unread() throws IOException;
 }
