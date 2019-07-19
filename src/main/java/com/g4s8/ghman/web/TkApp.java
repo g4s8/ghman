@@ -67,7 +67,9 @@ final class TkApp extends TkWrap {
                         new TkFork(
                             new FkParams(
                                 "code", ".+",
-                                new TkGitHubAuthorization(data)
+                                new TkGitHubAuthorization(
+                                    new PgUsers(data), env
+                                )
                             ),
                             new FkGitHubAuthRedirection(env)
                         )

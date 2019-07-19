@@ -18,6 +18,7 @@ package com.g4s8.ghman.user;
 
 import com.jcabi.github.Github;
 import java.io.IOException;
+import org.cactoos.iterable.IterableOf;
 import org.telegram.telegrambots.api.objects.Chat;
 
 /**
@@ -55,31 +56,39 @@ public interface Users {
     final class Fake implements Users {
 
         /**
-         * Github API.
+         * Users.
          */
-        private final Github github;
+        private final Iterable<User> users;
 
         /**
          * Ctor.
          * @param github Github api
          */
         public Fake(final Github github) {
-            this.github = github;
+            this(new IterableOf<User>(new User.Fake(github)));
+        }
+
+        /**
+         * Ctor.
+         * @param users Users
+         */
+        public Fake(final Iterable<User> users) {
+            this.users = users;
         }
 
         @Override
         public User user(final Chat chat) throws IOException {
-            return new User.Fake(this.github);
+            return this.users.iterator().next();
         }
 
         @Override
         public User user(final long uid) {
-            throw new UnsupportedOperationException();
+            return this.users.iterator().next();
         }
 
         @Override
         public Iterable<User> active() throws IOException {
-            throw new UnsupportedOperationException();
+            return this.users;
         }
     }
 }

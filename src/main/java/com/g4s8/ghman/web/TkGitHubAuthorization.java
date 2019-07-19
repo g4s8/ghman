@@ -16,14 +16,16 @@
  */
 package com.g4s8.ghman.web;
 
-import com.g4s8.ghman.data.PgUsers;
+import com.g4s8.ghman.env.EnvironmentVariables;
 import com.g4s8.ghman.user.User;
+import com.g4s8.ghman.user.Users;
 import com.jcabi.http.Request;
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.JsonResponse;
 import com.jcabi.log.Logger;
 import java.io.IOException;
-import javax.sql.DataSource;
+import org.cactoos.Func;
+import org.cactoos.func.IoCheckedFunc;
 import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.auth.RqAuth;
@@ -36,43 +38,69 @@ import org.takes.rs.RsText;
  * @todo #4:30min replace those static loggers with something more OO
  *  (Related with
  *  https://www.yegor256.com/2019/03/19/logging-without-static-logger.html)
- * @todo #4:30min Implement unit tests for TkGitHubAuthorization. Refer
- *  to takes framework Unit testing guide @ https://github.com/yegor256/takes#unit-testing
  */
 final class TkGitHubAuthorization implements Take {
 
     /**
+     * Code request param.
+     */
+    private static final String P_CODE = "code";
+
+    /**
      * Data source.
      */
-    private final DataSource data;
+    private final Users users;
+
+    /**
+     * Authorization function.
+     * @todo #43:30min Introduce a meaningful abstraction for this. The
+     *  current implementation in the secondary constructor should reside in its
+     *  own class and there should be a Fake implementation for use in the tests.
+     *  Do not forget to correct unit test accordingly.
+     */
+    private final Func<org.takes.Request, String> auth;
 
     /**
      * Ctor.
-     * @param data Data source
+     * @param users Users
+     * @param env Environment
      */
-    TkGitHubAuthorization(final DataSource data) {
-        this.data = data;
+    TkGitHubAuthorization(final Users users, final EnvironmentVariables env) {
+        this(
+            users,
+            req -> new JdkRequest("https://github.com/login/oauth/access_token")
+                .method(Request.POST)
+                .uri()
+                .queryParam("client_id", env.githubClientId())
+                .queryParam("client_secret", env.githubClientSecret())
+                .queryParam(
+                    TkGitHubAuthorization.P_CODE,
+                    new RqHref.Smart(req).single(TkGitHubAuthorization.P_CODE)
+                ).back()
+                .header("Accept", "application/json")
+                .fetch()
+                .as(JsonResponse.class)
+                .json()
+                .readObject()
+                .getString("access_token")
+        );
+    }
+
+    /**
+     * Ctor.
+     * @param users Data source
+     * @param auth Authorization
+     */
+    TkGitHubAuthorization(final Users users, final Func<org.takes.Request, String> auth) {
+        this.users = users;
+        this.auth = auth;
     }
 
     @Override
     public Response act(final org.takes.Request req) throws IOException {
-        final String codeparam = "code";
-        final String code = new RqHref.Smart(req)
-            .single(codeparam);
-        final String token = new JdkRequest("https://github.com/login/oauth/access_token")
-            .method(Request.POST)
-            .uri()
-            .queryParam("client_id", System.getenv("GH_CLIENT"))
-            .queryParam("client_secret", System.getenv("GH_SECRET"))
-            .queryParam(codeparam, code).back()
-            .header("Accept", "application/json")
-            .fetch()
-            .as(JsonResponse.class)
-            .json()
-            .readObject()
-            .getString("access_token");
+        final String token = new IoCheckedFunc<>(this.auth).apply(req);
         final String urn = new RqAuth(req).identity().urn();
-        final User user = new PgUsers(this.data).user(Long.parseLong(urn.split(":")[2]));
+        final User user = this.users.user(Long.parseLong(urn.split(":")[2]));
         user.authorize(token);
         Logger.info(
             TkApp.class,
