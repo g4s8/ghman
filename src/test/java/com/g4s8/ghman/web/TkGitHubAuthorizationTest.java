@@ -20,8 +20,6 @@ import com.g4s8.ghman.user.User;
 import com.g4s8.ghman.user.Users;
 import com.jcabi.github.mock.MkGithub;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
-import org.cactoos.iterable.IterableOf;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.StringContains;
 import org.junit.jupiter.api.Test;
@@ -40,14 +38,14 @@ class TkGitHubAuthorizationTest {
 
     @Test
     void authorizes() throws IOException {
-        final AtomicInteger count = new AtomicInteger(0);
+        final User.Fake user = new User.Fake(new MkGithub());
         new TkGitHubAuthorization(
-            new Users.Fake(new IterableOf<>(new User.Fake(new MkGithub(), count))),
+            new Users.Fake(user),
             req -> "123"
         ).act(new RqWithAuth(new Identity.Simple("urn:fake:1"), new RqFake()));
         new Assertion<>(
             "Authorizes user",
-            count.get(),
+            user.authCount(),
             new IsEqual<>(1)
         ).affirm();
     }
@@ -58,7 +56,7 @@ class TkGitHubAuthorizationTest {
             "Returns user friendly message",
             new RsPrint(
                 new TkGitHubAuthorization(
-                    new Users.Fake(new IterableOf<>(new User.Fake(new MkGithub()))),
+                    new Users.Fake(new User.Fake(new MkGithub())),
                     req -> "abc"
                 ).act(new RqWithAuth(new Identity.Simple("urn:fake:5"), new RqFake()))
             ).printBody(),
