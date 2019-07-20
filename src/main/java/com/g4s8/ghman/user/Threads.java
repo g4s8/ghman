@@ -45,7 +45,7 @@ public interface Threads {
 
     /**
      * Unread threads.
-     * @return Unread threads map
+     * @return User id to Unread threads map
      * @throws IOException If fails
      */
     Map<Long, List<Thread>> unread() throws IOException;

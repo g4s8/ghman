@@ -18,6 +18,7 @@ package com.g4s8.ghman.user;
 
 import java.io.IOException;
 import java.time.Instant;
+import javax.json.Json;
 import javax.json.JsonObject;
 
 /**
@@ -46,4 +47,39 @@ public interface Thread {
      * @throws IOException If fails
      */
     Instant lastRead() throws IOException;
+
+    /**
+     * Fake implementation for tests.
+     * @since 1.0
+     */
+    final class Fake implements Thread {
+
+        /**
+         * Thread id.
+         */
+        private final String tid;
+
+        /**
+         * Ctor.
+         * @param tid Thread id.
+         */
+        public Fake(final String tid) {
+            this.tid = tid;
+        }
+
+        @Override
+        public String tid() {
+            return this.tid;
+        }
+
+        @Override
+        public JsonObject subject() throws IOException {
+            return Json.createObjectBuilder().add("title", "Some Title").build();
+        }
+
+        @Override
+        public Instant lastRead() throws IOException {
+            return Instant.now();
+        }
+    }
 }

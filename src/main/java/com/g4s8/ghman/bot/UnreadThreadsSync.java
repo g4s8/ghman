@@ -38,10 +38,6 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
  *  notification. Please aks ARC what exactly we want to send to user and
  *  create a class to extract and format this information from `JsonObject`
  *  (github subject) accordingly.
- * @todo #9:30min Test for `Notification.UnreadThreads` should be
- *  implemented after https://github.com/g4s8/teletakes/issues/14 is
- *  resolved. Please, while implementing try to avoid using mocked objects,
- *  use fake implementations instead.
  */
 public final class UnreadThreadsSync implements Sync {
 
