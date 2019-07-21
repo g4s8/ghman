@@ -24,19 +24,9 @@ import com.g4s8.teletakes.rs.RsInlineKeyboard;
 import com.g4s8.teletakes.rs.RsText;
 import com.g4s8.teletakes.rs.TmResponse;
 import com.g4s8.teletakes.tk.TmTake;
-import com.jcabi.github.Comment;
 import com.jcabi.github.Issue;
 import java.io.IOException;
-import java.util.Date;
 import org.cactoos.iterable.IterableOf;
-import org.cactoos.list.Mapped;
-import org.cactoos.map.MapEntry;
-import org.cactoos.scalar.Ternary;
-import org.cactoos.scalar.Unchecked;
-import org.cactoos.text.FormattedText;
-import org.cactoos.text.Joined;
-import org.cactoos.text.TextOf;
-import org.cactoos.text.UncheckedText;
 import org.telegram.telegrambots.api.objects.Update;
 
 /**
@@ -45,9 +35,6 @@ import org.telegram.telegrambots.api.objects.Update;
  * @since 1.0
  * @todo #2:30min Implement Unit tests for TkThread class
  *  *  use JUNIT and cactoos-matchers wrapper.
- * @todo #2:30min Fix the ClassDataAbstractionCouplingCheck rule exclusion
- *  in TkThread class. This class is too complex.
- * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class TkThread implements TmTake {
 
@@ -72,59 +59,18 @@ public final class TkThread implements TmTake {
         final GhThread thread = user.thread(
             update.getCallbackQuery().getData().split("#")[1]
         );
-        final Issue issue = new ThreadIssue(user.github(), thread);
-        final Issue.Smart smart = new Issue.Smart(issue);
-        final TmResponse text = new RsText(
-            new FormattedText(
-                "[#%d](%s) - %s\n\n%s",
-                issue.number(),
-                new FormattedText(
-                    "https://github.com/%s/issues/%d",
-                    issue.repo().coordinates(),
-                    issue.number()
-                ).toString(),
-                smart.title(),
-                new Joined(
-                    new TextOf("\n\n"),
-                    new Mapped<>(
-                        cmt -> new FormattedText(
-                            "[@%s](https://github.com/%s) > %s",
-                            cmt.author().login(),
-                            cmt.author().login(),
-                            cmt.body()
-                        ),
-                        new Mapped<>(
-                            Comment.Smart::new,
-                            issue.comments().iterate(
-                                new Date(thread.lastRead().toEpochMilli())
-                            )
-                        )
-                    )
-                )
-            )
+        final Issue.Smart issue = new Issue.Smart(
+            new ThreadIssue(user.github(), thread)
         );
-        return new Unchecked<>(
-            new Ternary<>(
-                () -> smart.isOpen()
-                    && smart.author().equals(user.github().users().self()),
-                new RsInlineKeyboard(
-                    text,
-                    new IterableOf<>(
-                        new IterableOf<>(
-                            new MapEntry<>(
-                                "close",
-                                new UncheckedText(
-                                    new FormattedText(
-                                        "click:notification.close?repo=%s&issue=%d",
-                                        issue.repo().coordinates(), issue.number()
-                                    )
-                                ).asString()
-                            )
-                        )
-                    )
-                ),
-                text
-            )
-        ).value();
+        TmResponse res = new RsText(
+            new ThreadIssueText(issue, thread.lastRead().toEpochMilli())
+        );
+        if (issue.isOpen() && issue.author().equals(user.github().users().self())) {
+            res = new RsInlineKeyboard(
+                res,
+                new IterableOf<>(new ThreadIssueButtons(issue).entrySet())
+            );
+        }
+        return res;
     }
 }
