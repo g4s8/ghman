@@ -17,6 +17,7 @@
 package com.g4s8.ghman;
 
 import com.g4s8.ghman.bot.BotApp;
+import com.g4s8.ghman.bot.GhBot;
 import com.g4s8.ghman.data.FlywayDataSource;
 import com.g4s8.ghman.data.PgUsers;
 import com.g4s8.ghman.data.SimpleDataSource;
@@ -65,10 +66,10 @@ public final class App {
         final Thread bot = new Thread(
             new VerboseRunnable(
                 new BotApp(
-                    System.getenv("TG_NAME"),
-                    System.getenv("TG_TOKEN"),
-                    new PgUsers(data),
-                    new EnvironmentVariables()
+                    new GhBot(
+                        new PgUsers(data),
+                        new EnvironmentVariables()
+                    )
                 )
             )
         );

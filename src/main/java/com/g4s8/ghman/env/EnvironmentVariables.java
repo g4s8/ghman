@@ -42,6 +42,16 @@ public final class EnvironmentVariables {
     private static final String APP_HOST = "APP_HOST";
 
     /**
+     * Bot username Key String.
+     */
+    private static final String TG_NAME = "TG_NAME";
+
+    /**
+     * Bot token Key String.
+     */
+    private static final String TG_TOKEN = "TG_TOKEN";
+
+    /**
      * Environment Variables Map.
      */
     private final Map<String, String> envvars;
@@ -69,7 +79,7 @@ public final class EnvironmentVariables {
      */
     public String githubClientId() throws IllegalStateException {
         return this.envvars.computeIfAbsent(
-            this.GH_CLIENT,
+            EnvironmentVariables.GH_CLIENT,
             this::missingKeyExceptionThrower
         );
     }
@@ -82,7 +92,7 @@ public final class EnvironmentVariables {
      */
     public String githubClientSecret() throws IllegalStateException {
         return this.envvars.computeIfAbsent(
-            this.GH_SECRET,
+            EnvironmentVariables.GH_SECRET,
             this::missingKeyExceptionThrower
         );
     }
@@ -95,7 +105,33 @@ public final class EnvironmentVariables {
      */
     public String applicationHost() throws IllegalStateException {
         return this.envvars.computeIfAbsent(
-            this.APP_HOST,
+            EnvironmentVariables.APP_HOST,
+            this::missingKeyExceptionThrower
+        );
+    }
+
+    /**
+     * Retrieve Bot username.
+     * @return Bot username
+     * @throws IllegalStateException if bot username is missing from
+     *  system environment variables.
+     */
+    public String botUsername() throws IllegalStateException {
+        return this.envvars.computeIfAbsent(
+            EnvironmentVariables.TG_NAME,
+            this::missingKeyExceptionThrower
+        );
+    }
+
+    /**
+     * Retrieve Bot token.
+     * @return Bot token
+     * @throws IllegalStateException if bot token is missing from
+     *  system environment variables.
+     */
+    public String botToken() throws IllegalStateException {
+        return this.envvars.computeIfAbsent(
+            EnvironmentVariables.TG_TOKEN,
             this::missingKeyExceptionThrower
         );
     }
