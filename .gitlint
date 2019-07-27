@@ -1,2 +1,2 @@
---subject-regex=#\d+ - .+
+--subject-regex=\(?#\d+\)? - .+
 --since=2019-07-15
