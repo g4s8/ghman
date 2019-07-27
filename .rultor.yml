@@ -5,8 +5,9 @@ env:
   MAVEN_OPTS: "-Xmx1g"
 merge:
   script:
-    - "mvn install -B -Pqulice"
-    - "pdd --source=$(pwd) --verbose --file=/dev/null"
+    - mvn install -B -Pqulice
+    - pdd --source=$(pwd) --verbose --file=/dev/null
+    - gitlint
   fast-forward: "no"
 architect:
   - "g4s8"
