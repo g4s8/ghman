@@ -25,10 +25,6 @@ import com.jcabi.github.mock.MkGithub;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import org.cactoos.list.ListOf;
-import org.cactoos.map.MapEntry;
-import org.cactoos.map.MapOf;
 import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.Assertion;
 import org.llorllale.cactoos.matchers.HasValuesMatching;
@@ -49,7 +45,7 @@ final class UnreadThreadsSyncTest {
         final FakeBot bot = new FakeBot();
         new UnreadThreadsSync(
             bot,
-            new UnreadThreads(1L, new Thread.Fake("1")),
+            new Threads.Fake(1L, new Thread.Fake("1")),
             new Users.Fake(new User.Fake(new MkGithub(), tid))
         ).sync();
         new Assertion<>(
@@ -57,38 +53,6 @@ final class UnreadThreadsSyncTest {
             bot.sent,
             new HasValuesMatching<>(msg -> msg.getChatId().equals(tid))
         ).affirm();
-    }
-
-    private static final class UnreadThreads implements Threads {
-
-        private final Map<Long, List<Thread>> threads;
-
-        UnreadThreads(final long tid, final Thread thread) {
-            this(tid, new ListOf<>(thread));
-        }
-
-        UnreadThreads(final long tid, final List<Thread> threads) {
-            this(new MapOf<>(new MapEntry<>(tid, threads)));
-        }
-
-        UnreadThreads(final Map<Long, List<Thread>> threads) {
-            this.threads = threads;
-        }
-
-        @Override
-        public Thread thread(final long uid, final String tid) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void update(final long uid, final Thread thread) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Map<Long, List<Thread>> unread() throws IOException {
-            return this.threads;
-        }
     }
 
     private static final class FakeBot implements Bot {
