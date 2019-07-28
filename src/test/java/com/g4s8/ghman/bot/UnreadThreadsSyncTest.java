@@ -25,8 +25,11 @@ import com.jcabi.github.mock.MkGithub;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import org.cactoos.iterable.IterableOf;
+import org.hamcrest.core.AllOf;
 import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.Assertion;
+import org.llorllale.cactoos.matchers.HasSize;
 import org.llorllale.cactoos.matchers.HasValuesMatching;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 
@@ -51,7 +54,12 @@ final class UnreadThreadsSyncTest {
         new Assertion<>(
             "must have notified user",
             bot.sent,
-            new HasValuesMatching<>(msg -> msg.getChatId().equals(tid))
+            new AllOf<>(
+                new IterableOf<>(
+                    new HasSize(1),
+                    new HasValuesMatching<>(msg -> msg.getChatId().equals(tid))
+                )
+            )
         ).affirm();
     }
 
