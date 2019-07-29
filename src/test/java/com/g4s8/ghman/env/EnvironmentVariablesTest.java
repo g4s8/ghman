@@ -46,6 +46,16 @@ public final class EnvironmentVariablesTest {
     private static final String APP_HOST = "HOST";
 
     /**
+     * Bot username Key String.
+     */
+    private static final String TG_NAME = "NAME";
+
+    /**
+     * Bot token Key String.
+     */
+    private static final String TG_TOKEN = "TOKEN";
+
+    /**
      * Environment Variables Key/Value Map.
      */
     private final Map<String, String> validvarmap = new HashMap<>();
@@ -55,6 +65,8 @@ public final class EnvironmentVariablesTest {
         this.validvarmap.put("GH_CLIENT", EnvironmentVariablesTest.CLIENT_ID);
         this.validvarmap.put("GH_SECRET", EnvironmentVariablesTest.SECRET);
         this.validvarmap.put("APP_HOST", EnvironmentVariablesTest.APP_HOST);
+        this.validvarmap.put("TG_NAME", EnvironmentVariablesTest.TG_NAME);
+        this.validvarmap.put("TG_TOKEN", EnvironmentVariablesTest.TG_TOKEN);
     }
 
     @Test
@@ -81,6 +93,24 @@ public final class EnvironmentVariablesTest {
             "Failed to get Application Host value from environment variables",
             new EnvironmentVariables(this.validvarmap).applicationHost(),
             new IsEqual<>(EnvironmentVariablesTest.APP_HOST)
+        ).affirm();
+    }
+
+    @Test
+    void shouldReturnTgNameValue() {
+        new Assertion<>(
+            "must get bot username value from environment variables",
+            new EnvironmentVariables(this.validvarmap).botUsername(),
+            new IsEqual<>(EnvironmentVariablesTest.TG_NAME)
+        ).affirm();
+    }
+
+    @Test
+    void shouldReturnTgTokenValue() {
+        new Assertion<>(
+            "must get bot token value from environment variables",
+            new EnvironmentVariables(this.validvarmap).botToken(),
+            new IsEqual<>(EnvironmentVariablesTest.TG_TOKEN)
         ).affirm();
     }
 }
