@@ -84,8 +84,6 @@ public final class PgUser implements User {
         }
     }
 
-    // @todo #53:30min Create an abstraction to expose user details from json
-    //  object and change return type of this method. Do not forget about tests.
     @Override
     public JsonObject telegram() throws IOException {
         try {
