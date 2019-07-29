@@ -31,6 +31,7 @@ import org.cactoos.text.UncheckedText;
  *  using junit, cactoos-matchers and fake class (no mocks).
  */
 public final class ThreadIssueButtons extends MapEnvelope<String, String> {
+
     /**
      * Ctor.
      * @param issue Issue
