@@ -27,6 +27,8 @@ import com.g4s8.teletakes.tk.TmTake;
 import com.jcabi.github.Issue;
 import java.io.IOException;
 import org.cactoos.iterable.IterableOf;
+import org.cactoos.scalar.IoChecked;
+import org.cactoos.scalar.Ternary;
 import org.telegram.telegrambots.api.objects.Update;
 
 /**
@@ -35,6 +37,10 @@ import org.telegram.telegrambots.api.objects.Update;
  * @since 1.0
  * @todo #2:30min Implement Unit tests for TkThread class
  *  *  use JUNIT and cactoos-matchers wrapper.
+ * @todo #35:30min Fix the ClassDataAbstractionCouplingCheck rule exclusion
+ *  in this class. It is too complex, some more abstraction should be brought
+ *  outside of it.
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class TkThread implements TmTake {
 
@@ -62,15 +68,18 @@ public final class TkThread implements TmTake {
         final Issue.Smart issue = new Issue.Smart(
             new ThreadIssue(user.github(), thread)
         );
-        TmResponse res = new RsText(
+        final TmResponse txt = new RsText(
             new ThreadIssueText(issue, thread.lastRead().toEpochMilli())
         );
-        if (issue.isOpen() && issue.author().equals(user.github().users().self())) {
-            res = new RsInlineKeyboard(
-                res,
-                new IterableOf<>(new ThreadIssueButtons(issue).entrySet())
-            );
-        }
-        return res;
+        return new IoChecked<>(
+            new Ternary<>(
+                issue.isOpen() && issue.author().equals(user.github().users().self()),
+                new RsInlineKeyboard(
+                    txt,
+                    new IterableOf<>(new ThreadIssueButtons(issue).entrySet())
+                ),
+                txt
+            )
+        ).value();
     }
 }
