@@ -30,7 +30,7 @@ import org.cactoos.text.TextOf;
  * Telegram bot notifications text with latest comments.
  *
  * @since 1.0
- * @todo #35:30min Implement Unit tests for this class
+ * @todo #35:30min Implement Unit tests for this class,
  *  use junit, cactoos-matchers and fake class (no mocks).
  */
 public final class ThreadIssueText extends TextEnvelope {
