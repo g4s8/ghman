@@ -36,6 +36,12 @@ import org.telegram.telegrambots.generics.LongPollingBot;
  * GhMan Bot.
  *
  * @since 1.0
+ * @todo #11:30mins Patterns in callback queries chains are distributed in
+ *  multiple classes: for example, pattern for close issue is given here and in
+ *  TkCloseIssue. Find a way to avoid this by maybe having string pattern
+ *  representation here and passing Matcher to telegram takes (TkCloseIssue) or
+ *  by having one class implementing Fork and containing both the current code
+ *  of TkCloseIssue and the creation of the FkCallbackQuery.
  * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 public final class GhBot implements Bot, LongPollingBot {
