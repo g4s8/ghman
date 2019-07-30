@@ -62,7 +62,7 @@ final class TkGitHubAuthorization implements Take {
      * Logger.
      */
     @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
-    private final Logger logger;
+    private final Logger log;
 
     /**
      * Ctor.
@@ -103,16 +103,16 @@ final class TkGitHubAuthorization implements Take {
      * Ctor.
      * @param users Data source
      * @param auth Authorization
-     * @param logger Logger
+     * @param log Logger
      */
     TkGitHubAuthorization(
         final Users users,
         final Func<org.takes.Request, String> auth,
-        final Logger logger
+        final Logger log
     ) {
         this.users = users;
         this.auth = auth;
-        this.logger = logger;
+        this.log = log;
     }
 
     @Override
@@ -121,7 +121,7 @@ final class TkGitHubAuthorization implements Take {
         final String urn = new RqAuth(req).identity().urn();
         final User user = this.users.user(Long.parseLong(urn.split(":")[2]));
         user.authorize(token);
-        this.logger.info(
+        this.log.info(
             "User {} ({}) authorized by token",
             user.uid(), urn
         );
