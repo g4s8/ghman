@@ -22,10 +22,11 @@ import com.g4s8.ghman.user.Users;
 import com.jcabi.http.Request;
 import com.jcabi.http.request.JdkRequest;
 import com.jcabi.http.response.JsonResponse;
-import com.jcabi.log.Logger;
 import java.io.IOException;
 import org.cactoos.Func;
 import org.cactoos.func.IoCheckedFunc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.takes.Response;
 import org.takes.Take;
 import org.takes.facets.auth.RqAuth;
@@ -35,9 +36,6 @@ import org.takes.rs.RsText;
 /**
  * Github Authorization Take.
  * @since 1.0
- * @todo #4:30min replace those static loggers with something more OO
- *  (Related with
- *  https://www.yegor256.com/2019/03/19/logging-without-static-logger.html)
  */
 final class TkGitHubAuthorization implements Take {
 
@@ -59,6 +57,12 @@ final class TkGitHubAuthorization implements Take {
      *  Do not forget to correct unit test accordingly.
      */
     private final Func<org.takes.Request, String> auth;
+
+    /**
+     * Logger.
+     */
+    @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
+    private final Logger log;
 
     /**
      * Ctor.
@@ -92,8 +96,23 @@ final class TkGitHubAuthorization implements Take {
      * @param auth Authorization
      */
     TkGitHubAuthorization(final Users users, final Func<org.takes.Request, String> auth) {
+        this(users,  auth, LoggerFactory.getLogger(TkGitHubAuthorization.class));
+    }
+
+    /**
+     * Ctor.
+     * @param users Data source
+     * @param auth Authorization
+     * @param log Logger
+     */
+    TkGitHubAuthorization(
+        final Users users,
+        final Func<org.takes.Request, String> auth,
+        final Logger log
+    ) {
         this.users = users;
         this.auth = auth;
+        this.log = log;
     }
 
     @Override
@@ -102,9 +121,8 @@ final class TkGitHubAuthorization implements Take {
         final String urn = new RqAuth(req).identity().urn();
         final User user = this.users.user(Long.parseLong(urn.split(":")[2]));
         user.authorize(token);
-        Logger.info(
-            TkApp.class,
-            "User %d (%s) authorized by token",
+        this.log.info(
+            "User {} ({}) authorized by token",
             user.uid(), urn
         );
         return new RsText("Authorized successfully!");
