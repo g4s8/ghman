@@ -78,21 +78,35 @@ public interface User {
         private final AtomicInteger auth;
 
         /**
+         * Telegram id.
+         */
+        private final String tid;
+
+        /**
          * Ctor.
          * @param github Github api
          */
         public Fake(final Github github) {
-            this(github, new AtomicInteger(0));
+            this(github, "some_id");
         }
 
         /**
          * Ctor.
          * @param github Github api
-         * @param auth Count for auth calls
+         * @param tid Telegram id
          */
-        public Fake(final Github github, final AtomicInteger auth) {
+        public Fake(final Github github, final String tid) {
             this.github = github;
-            this.auth = auth;
+            this.tid = tid;
+            this.auth = new AtomicInteger(0);
+        }
+
+        /**
+         * Auth count.
+         * @return Count.
+         */
+        public int authCount() {
+            return this.auth.get();
         }
 
         @Override
@@ -117,7 +131,7 @@ public interface User {
 
         @Override
         public String tid() throws IOException {
-            throw new UnsupportedOperationException();
+            return this.tid;
         }
     }
 }

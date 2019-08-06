@@ -20,12 +20,11 @@ import com.g4s8.ghman.user.Thread;
 import com.g4s8.ghman.user.Threads;
 import com.g4s8.ghman.user.Users;
 import com.g4s8.ghman.web.Sync;
-import com.g4s8.teletakes.bot.BotSimple;
+import com.g4s8.teletakes.bot.Bot;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 /**
  * Notify user into telegram chat.
@@ -39,17 +38,13 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
  *  notification. Please aks ARC what exactly we want to send to user and
  *  create a class to extract and format this information from `JsonObject`
  *  (github subject) accordingly.
- * @todo #9:30min Test for `Notification.UnreadThreads` should be
- *  implemented after https://github.com/g4s8/teletakes/issues/14 is
- *  resolved. Please, while implementing try to avoid using mocked objects,
- *  use fake implementations instead.
  */
 public final class UnreadThreadsSync implements Sync {
 
     /**
      * Telegram bot.
      */
-    private final BotSimple bot;
+    private final Bot bot;
 
     /**
      * Threads.
@@ -68,7 +63,7 @@ public final class UnreadThreadsSync implements Sync {
      * @param users Users
      */
     public UnreadThreadsSync(
-        final BotSimple bot,
+        final Bot bot,
         final Threads threads,
         final Users users
     ) {
@@ -84,13 +79,13 @@ public final class UnreadThreadsSync implements Sync {
             final String tid = this.users.user(item.getKey()).tid();
             for (final Thread thread : item.getValue()) {
                 try {
-                    this.bot.sendMessage(
+                    this.bot.send(
                         new SendMessage()
                             .setChatId(tid)
                             .enableMarkdown(true)
                             .setText(thread.subject().getString("title"))
                     );
-                } catch (final TelegramApiException err) {
+                } catch (final IOException err) {
                     throw new IOException("Error while notifying user", err);
                 }
             }

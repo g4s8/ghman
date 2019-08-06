@@ -19,6 +19,9 @@ package com.g4s8.ghman.user;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.cactoos.list.ListOf;
+import org.cactoos.map.MapEntry;
+import org.cactoos.map.MapOf;
 
 /**
  * Github notifications thread.
@@ -45,8 +48,61 @@ public interface Threads {
 
     /**
      * Unread threads.
-     * @return Unread threads map
+     * @return User id to unread threads map
      * @throws IOException If fails
      */
     Map<Long, List<Thread>> unread() throws IOException;
+
+    /**
+     * Fake.
+     * @since 1.0
+     */
+    final class Fake implements Threads {
+
+        /**
+         * Threads by user id.
+         */
+        private final Map<Long, List<Thread>> threads;
+
+        /**
+         * Ctor.
+         * @param uid User id.
+         * @param thread Thread.
+         */
+        public Fake(final long uid, final Thread thread) {
+            this(uid, new ListOf<>(thread));
+        }
+
+        /**
+         * Ctor.
+         * @param uid User id.
+         * @param threads Threads.
+         */
+        public Fake(final long uid, final List<Thread> threads) {
+            this(new MapOf<>(new MapEntry<>(uid, threads)));
+        }
+
+        /**
+         * Ctor.
+         * @param threads Threads by user id.
+         */
+        public Fake(final Map<Long, List<Thread>> threads) {
+            this.threads = threads;
+        }
+
+        @Override
+        public Thread thread(final long uid, final String tid) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void update(final long uid, final Thread thread) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Map<Long, List<Thread>> unread() throws IOException {
+            return this.threads;
+        }
+    }
 }
