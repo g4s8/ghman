@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import javax.json.JsonObject;
 import org.cactoos.Scalar;
 import org.cactoos.scalar.IoChecked;
+import org.cactoos.scalar.NumberOf;
 import org.cactoos.scalar.SolidScalar;
 import org.cactoos.scalar.Unchecked;
 import org.cactoos.text.FormattedText;
@@ -76,7 +77,7 @@ public final class ThreadIssue implements Issue {
                 }
                 return ghb.repos()
                     .get(new Coordinates.Simple(matcher.group("coords")))
-                    .issues().get(Integer.parseInt(matcher.group("num")));
+                    .issues().get(new NumberOf(matcher.group("num")).intValue());
             }
         );
     }

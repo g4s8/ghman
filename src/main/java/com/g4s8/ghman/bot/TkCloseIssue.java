@@ -16,15 +16,18 @@
  */
 package com.g4s8.ghman.bot;
 
+import com.g4s8.ghman.user.GhUser;
 import com.g4s8.ghman.user.Users;
 import com.g4s8.teletakes.rs.RsText;
 import com.g4s8.teletakes.rs.TmResponse;
 import com.g4s8.teletakes.tk.TmTake;
 import com.jcabi.github.Coordinates;
 import com.jcabi.github.Issue;
+import com.jcabi.github.Repo;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.cactoos.scalar.NumberOf;
 import org.cactoos.text.FormattedText;
 import org.cactoos.text.UncheckedText;
 import org.telegram.telegrambots.api.objects.Update;
@@ -32,11 +35,6 @@ import org.telegram.telegrambots.api.objects.Update;
 /**
  * Telegram take to close issue.
  * @since 1.0
- * @todo #11:30mins 1) find a way to avoid using static method Integer.parseInt()
- *  2) there too much method chaining in Issue.Smart() instance creation. It's
- *  hard to read and not very good in term of OO practice: we depend here on
- *  many objects and we want to promote loose coupling usually. Find a way to
- *  avoid it.
  */
 public final class TkCloseIssue implements TmTake {
 
@@ -72,14 +70,14 @@ public final class TkCloseIssue implements TmTake {
                 ).asString()
             );
         }
+        final GhUser user = this.users.user(
+            upd.getCallbackQuery().getMessage().getChat()
+        ).github();
+        final Repo repo = user.github().repos().get(
+            new Coordinates.Simple(matcher.group("coords"))
+        );
         new Issue.Smart(
-            this.users.user(
-                upd.getCallbackQuery().getMessage().getChat()
-            )
-            .github().github().repos().get(
-                new Coordinates.Simple(matcher.group("coords"))
-            )
-            .issues().get(Integer.parseInt(matcher.group("issue")))
+            repo.issues().get(new NumberOf(matcher.group("issue")).intValue())
         ).close();
         return new RsText("Issue closed");
     }
